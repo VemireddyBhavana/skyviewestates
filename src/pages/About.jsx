@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
 import Navbar from '../components/Layout/Navbar';
 import AboutIntroSection from '../components/Sections/AboutIntroSection';
-import ClientCentricSection from '../components/Sections/ClientCentricSection';
 import OurStorySection from '../components/Sections/OurStorySection';
 import MeetFoundersSection from '../components/Sections/MeetFoundersSection';
 import TrustGallerySection from '../components/Sections/TrustGallerySection';
@@ -30,10 +29,6 @@ const About = () => {
 
       <ScrollReveal>
         <AboutIntroSection />
-      </ScrollReveal>
-
-      <ScrollReveal>
-        <ClientCentricSection />
       </ScrollReveal>
 
       <ScrollReveal>
