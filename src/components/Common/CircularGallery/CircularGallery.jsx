@@ -178,18 +178,18 @@ class Media {
             vUv.y * ratio.y + (1.0 - ratio.y) * 0.5
           );
           
-          // Premium dark charcoal background for margins
-          vec4 color = vec4(0.08, 0.08, 0.09, 1.0);
+          // Default to completely transparent
+          vec4 color = vec4(0.0, 0.0, 0.0, 0.0);
+          float alpha = 0.0;
           
           if (uv.x >= 0.0 && uv.x <= 1.0 && uv.y >= 0.0 && uv.y <= 1.0) {
             color = texture2D(tMap, uv);
+            
+            // Round the corners of the contained image itself
+            float d = roundedBoxSDF(uv - 0.5, vec2(0.5 - uBorderRadius), uBorderRadius);
+            float edgeSmooth = 0.002;
+            alpha = 1.0 - smoothstep(-edgeSmooth, edgeSmooth, d);
           }
-          
-          float d = roundedBoxSDF(vUv - 0.5, vec2(0.5 - uBorderRadius), uBorderRadius);
-          
-          // Smooth antialiasing for edges
-          float edgeSmooth = 0.002;
-          float alpha = 1.0 - smoothstep(-edgeSmooth, edgeSmooth, d);
           
           gl_FragColor = vec4(color.rgb, alpha);
         }
@@ -438,6 +438,8 @@ class App {
     if (this.medias) {
       this.medias.forEach(media => media.update(this.scroll, direction));
     }
+    this.gl.enable(this.gl.BLEND);
+    this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
     this.renderer.render({ scene: this.scene, camera: this.camera });
     this.scroll.last = this.scroll.current;
     this.raf = window.requestAnimationFrame(this.update.bind(this));
