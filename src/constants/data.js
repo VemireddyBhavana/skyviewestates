@@ -61,7 +61,7 @@ export const CONTACT_INFO = {
 export const FOUNDERS = [
   {
     id: 1,
-    name: "Umakanth",
+    name: "Madivar Sai Basava",
     role: "Founder & CEO",
     image: "https://res.cloudinary.com/djzgjy947/image/upload/v1780038032/WhatsApp_Image_2026-05-29_at_12.29.27_PM_qwwnqo.jpg",
     bio: "Passionate entrepreneur and real estate visionary focused on creating premium property experiences and modern luxury home solutions across Hyderabad.",
@@ -154,7 +154,7 @@ export const WORKERS = [
     image: "/assets/workers/design-3.png",
     specialty: "Photorealistic 3D rendering and virtual walkthroughs."
   },
-  
+
   // MASONRY (3)
   {
     id: 4,
@@ -192,7 +192,7 @@ export const WORKERS = [
     image: "/assets/workers/mason-3.png",
     specialty: "High-strength RCC works and complex column casting."
   },
-  
+
   // ELECTRICAL (3)
   {
     id: 7,
@@ -230,7 +230,7 @@ export const WORKERS = [
     image: "/assets/workers/electric-3.png",
     specialty: "Rooftop solar grid setup and backup power systems."
   },
-  
+
   // PLUMBING (3)
   {
     id: 10,
@@ -268,7 +268,7 @@ export const WORKERS = [
     image: "/assets/workers/plumbing-1.png",
     specialty: "Underground network planning and fire hydrant systems."
   },
-  
+
   // ENGINEERING (3)
   {
     id: 13,
