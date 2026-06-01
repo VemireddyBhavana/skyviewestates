@@ -1,5 +1,5 @@
 import { Camera, Mesh, Plane, Program, Renderer, Texture, Transform } from 'ogl';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import './CircularGallery.css';
 
@@ -98,6 +98,7 @@ class Media {
     geometry,
     gl,
     image,
+    aspectRatio,
     index,
     length,
     renderer,
@@ -125,7 +126,7 @@ class Media {
     this.textColor = textColor;
     this.borderRadius = borderRadius;
     this.font = font;
-    this.aspectRatio = 1.4; // Stable uniform aspect ratio
+    this.aspectRatio = aspectRatio || 1.33; // Perfectly stable natural aspect ratio
     this.createShader();
     this.createMesh();
     // this.createTitle();
@@ -374,6 +375,7 @@ class App {
         geometry: this.planeGeometry,
         gl: this.gl,
         image: data.image,
+        aspectRatio: data.aspectRatio,
         index,
         length: this.mediasImages.length,
         renderer: this.renderer,
@@ -394,9 +396,9 @@ class App {
     const padding = 0.8;
     this.medias.forEach((media) => {
       media.plane.scale.y = this.viewport.height * 0.55;
-      media.plane.scale.x = media.plane.scale.y * 1.4; // Uniform aspect ratio
+      media.plane.scale.x = media.plane.scale.y * media.aspectRatio; // Dynamic exact width matching aspect ratio
       media.plane.program.uniforms.uPlaneSizes.value = [media.plane.scale.x, media.plane.scale.y];
-      media.width = media.plane.scale.x + padding;
+      media.width = media.plane.scale.x + padding; // Perfect equal spacing
     });
     const totalWidth = this.medias.reduce((acc, media) => acc + media.width, 0);
     this.medias.forEach((media) => {
@@ -506,12 +508,58 @@ export default function CircularGallery({
   scrollEase = 0.05
 }) {
   const containerRef = useRef(null);
+  const [loadedItems, setLoadedItems] = useState(null);
+
   useEffect(() => {
-    if (!containerRef.current) return;
-    const app = new App(containerRef.current, { items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase });
+    if (!items || !items.length) return;
+    let active = true;
+    const promises = items.map((item) => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          const aspect = img.naturalWidth / img.naturalHeight;
+          resolve({
+            ...item,
+            aspectRatio: Math.max(0.5, Math.min(2.0, aspect)) // safe aspect clamp
+          });
+        };
+        img.onerror = () => {
+          resolve({
+            ...item,
+            aspectRatio: 1.33 // safe fallback
+          });
+        };
+        img.src = item.image;
+      });
+    });
+
+    Promise.all(promises).then((results) => {
+      if (active) {
+        setLoadedItems(results);
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [items]);
+
+  useEffect(() => {
+    if (!loadedItems || !containerRef.current) return;
+    const app = new App(containerRef.current, {
+      items: loadedItems,
+      bend,
+      textColor,
+      borderRadius,
+      font,
+      scrollSpeed,
+      scrollEase
+    });
     return () => {
       app.destroy();
     };
-  }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase]);
+  }, [loadedItems, bend, textColor, borderRadius, font, scrollSpeed, scrollEase]);
+
   return <div className="circular-gallery" ref={containerRef} />;
 }
