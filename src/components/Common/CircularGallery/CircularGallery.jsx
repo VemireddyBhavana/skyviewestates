@@ -168,28 +168,47 @@ class Media {
         }
         
         void main() {
+          float planeAspect = uPlaneSizes.x / uPlaneSizes.y;
+          float imageAspect = 1.4; // Default safe fallback
+          if (uImageSizes.y > 0.0 && uImageSizes.x > 0.0) {
+            imageAspect = uImageSizes.x / uImageSizes.y;
+          }
+
           // Object-fit: contain logic inside WebGL fragment shader
           vec2 ratio = vec2(
-            max((uPlaneSizes.x / uPlaneSizes.y) / (uImageSizes.x / uImageSizes.y), 1.0),
-            max((uPlaneSizes.y / uPlaneSizes.x) / (uImageSizes.y / uImageSizes.x), 1.0)
+            max(planeAspect / imageAspect, 1.0),
+            max(imageAspect / planeAspect, 1.0)
           );
           vec2 uv = vec2(
             vUv.x * ratio.x + (1.0 - ratio.x) * 0.5,
             vUv.y * ratio.y + (1.0 - ratio.y) * 0.5
           );
           
-          // Default to completely transparent
-          vec4 color = vec4(0.0, 0.0, 0.0, 0.0);
-          float alpha = 0.0;
+          vec4 color = vec4(0.0);
           
           if (uv.x >= 0.0 && uv.x <= 1.0 && uv.y >= 0.0 && uv.y <= 1.0) {
             color = texture2D(tMap, uv);
-            
-            // Round the corners of the contained image itself
-            float d = roundedBoxSDF(uv - 0.5, vec2(0.5 - uBorderRadius), uBorderRadius);
-            float edgeSmooth = 0.002;
-            alpha = 1.0 - smoothstep(-edgeSmooth, edgeSmooth, d);
           }
+          
+          // Centered plane-space coordinates
+          vec2 p = (vUv - 0.5) * uPlaneSizes;
+          
+          vec2 halfSize;
+          if (imageAspect > planeAspect) {
+            halfSize = vec2(uPlaneSizes.x * 0.5, (uPlaneSizes.x / imageAspect) * 0.5);
+          } else {
+            halfSize = vec2((uPlaneSizes.y * imageAspect) * 0.5, uPlaneSizes.y * 0.5);
+          }
+          
+          // Compute perfect undistorted border radius in plane space
+          float r = uBorderRadius * uPlaneSizes.y;
+          
+          // Limit border radius so it doesn't exceed half the size of the contained image
+          r = min(r, min(halfSize.x, halfSize.y));
+          
+          float d = roundedBoxSDF(p, halfSize - vec2(r), r);
+          float edgeSmooth = 0.01; // Smooth edge transition in plane units
+          float alpha = 1.0 - smoothstep(-edgeSmooth, edgeSmooth, d);
           
           gl_FragColor = vec4(color.rgb, alpha);
         }
