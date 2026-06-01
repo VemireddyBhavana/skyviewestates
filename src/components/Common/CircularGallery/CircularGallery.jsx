@@ -125,6 +125,7 @@ class Media {
     this.textColor = textColor;
     this.borderRadius = borderRadius;
     this.font = font;
+    this.aspectRatio = 1.4; // Stable uniform aspect ratio
     this.createShader();
     this.createMesh();
     // this.createTitle();
@@ -167,15 +168,22 @@ class Media {
         }
         
         void main() {
+          // Object-fit: contain logic inside WebGL fragment shader
           vec2 ratio = vec2(
-            min((uPlaneSizes.x / uPlaneSizes.y) / (uImageSizes.x / uImageSizes.y), 1.0),
-            min((uPlaneSizes.y / uPlaneSizes.x) / (uImageSizes.y / uImageSizes.x), 1.0)
+            max((uPlaneSizes.x / uPlaneSizes.y) / (uImageSizes.x / uImageSizes.y), 1.0),
+            max((uPlaneSizes.y / uPlaneSizes.x) / (uImageSizes.y / uImageSizes.x), 1.0)
           );
           vec2 uv = vec2(
             vUv.x * ratio.x + (1.0 - ratio.x) * 0.5,
             vUv.y * ratio.y + (1.0 - ratio.y) * 0.5
           );
-          vec4 color = texture2D(tMap, uv);
+          
+          // Premium dark charcoal background for margins
+          vec4 color = vec4(0.08, 0.08, 0.09, 1.0);
+          
+          if (uv.x >= 0.0 && uv.x <= 1.0 && uv.y >= 0.0 && uv.y <= 1.0) {
+            color = texture2D(tMap, uv);
+          }
           
           float d = roundedBoxSDF(vUv - 0.5, vec2(0.5 - uBorderRadius), uBorderRadius);
           
@@ -198,11 +206,11 @@ class Media {
     });
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    img.src = this.image;
     img.onload = () => {
       texture.image = img;
       this.program.uniforms.uImageSizes.value = [img.naturalWidth, img.naturalHeight];
     };
+    img.src = this.image;
   }
   createMesh() {
     this.plane = new Mesh(this.gl, {
@@ -270,14 +278,6 @@ class Media {
         this.plane.program.uniforms.uViewportSizes.value = [this.viewport.width, this.viewport.height];
       }
     }
-    this.scale = this.screen.height / 1500;
-    this.plane.scale.y = (this.viewport.height * (900 * this.scale)) / this.screen.height;
-    this.plane.scale.x = (this.viewport.width * (700 * this.scale)) / this.screen.width;
-    this.plane.program.uniforms.uPlaneSizes.value = [this.plane.scale.x, this.plane.scale.y];
-    this.padding = 2;
-    this.width = this.plane.scale.x + this.padding;
-    this.widthTotal = this.width * this.length;
-    this.x = this.width * this.index;
   }
 }
 
@@ -305,6 +305,7 @@ class App {
     this.onResize();
     this.createGeometry();
     this.createMedias(items, bend, textColor, borderRadius, font);
+    this.recalculateLayout();
     this.update();
     this.addEventListeners();
   }
@@ -368,6 +369,23 @@ class App {
       });
     });
   }
+  recalculateLayout() {
+    if (!this.medias || !this.viewport) return;
+    let currentX = 0;
+    const padding = 0.8;
+    this.medias.forEach((media) => {
+      media.plane.scale.y = this.viewport.height * 0.55;
+      media.plane.scale.x = media.plane.scale.y * 1.4; // Uniform aspect ratio
+      media.plane.program.uniforms.uPlaneSizes.value = [media.plane.scale.x, media.plane.scale.y];
+      media.width = media.plane.scale.x + padding;
+    });
+    const totalWidth = this.medias.reduce((acc, media) => acc + media.width, 0);
+    this.medias.forEach((media) => {
+      media.widthTotal = totalWidth;
+      media.x = currentX;
+      currentX += media.width;
+    });
+  }
   onTouchDown(e) {
     this.isDown = true;
     this.scroll.position = this.scroll.current;
@@ -411,6 +429,7 @@ class App {
     this.viewport = { width, height };
     if (this.medias) {
       this.medias.forEach(media => media.onResize({ screen: this.screen, viewport: this.viewport }));
+      this.recalculateLayout();
     }
   }
   update() {
