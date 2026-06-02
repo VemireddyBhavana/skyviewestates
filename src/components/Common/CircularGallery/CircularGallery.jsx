@@ -311,7 +311,8 @@ class App {
       borderRadius = 0,
       font = 'bold 30px Figtree',
       scrollSpeed = 2,
-      scrollEase = 0.05
+      scrollEase = 0.05,
+      spacing = 1.5
     } = {}
   ) {
     document.documentElement.classList.remove('no-js');
@@ -325,6 +326,7 @@ class App {
     this.onResize();
     this.createGeometry();
     this.createMedias(items, bend, textColor, borderRadius, font);
+    this.spacing = spacing;
     this.recalculateLayout();
     this.update();
     this.addEventListeners();
@@ -393,7 +395,7 @@ class App {
   recalculateLayout() {
     if (!this.medias || !this.viewport) return;
     let currentX = 0;
-    const padding = 0.8;
+    const padding = this.spacing;
     this.medias.forEach((media) => {
       media.plane.scale.y = this.viewport.height * 0.55;
       media.plane.scale.x = media.plane.scale.y * media.aspectRatio; // Dynamic exact width matching aspect ratio
@@ -505,7 +507,8 @@ export default function CircularGallery({
   borderRadius = 0.05,
   font = 'bold 30px Figtree',
   scrollSpeed = 2,
-  scrollEase = 0.05
+  scrollEase = 0.05,
+  spacing = 1.5
 }) {
   const containerRef = useRef(null);
   const [loadedItems, setLoadedItems] = useState(null);
@@ -554,12 +557,13 @@ export default function CircularGallery({
       borderRadius,
       font,
       scrollSpeed,
-      scrollEase
+      scrollEase,
+      spacing
     });
     return () => {
       app.destroy();
     };
-  }, [loadedItems, bend, textColor, borderRadius, font, scrollSpeed, scrollEase]);
+  }, [loadedItems, bend, textColor, borderRadius, font, scrollSpeed, scrollEase, spacing]);
 
   return <div className="circular-gallery" ref={containerRef} />;
 }
