@@ -255,16 +255,20 @@ class Media {
     const x = this.plane.position.x;
     const H = this.viewport.width / 2;
 
-    if (this.bend === 0) {
+    const isPortrait = this.viewport.width < this.viewport.height;
+    // Reduce bend on narrow screens to prevent corners from rotating into each other
+    const responsiveBend = isPortrait ? Math.min(this.bend, 1.0) : this.bend;
+
+    if (responsiveBend === 0) {
       this.plane.position.y = 0;
       this.plane.rotation.z = 0;
     } else {
-      const B_abs = Math.abs(this.bend);
+      const B_abs = Math.abs(responsiveBend);
       const R = (H * H + B_abs * B_abs) / (2 * B_abs);
       const effectiveX = Math.min(Math.abs(x), H);
 
       const arc = R - Math.sqrt(R * R - effectiveX * effectiveX);
-      if (this.bend > 0) {
+      if (responsiveBend > 0) {
         this.plane.position.y = -arc;
         this.plane.rotation.z = -Math.sign(x) * Math.asin(effectiveX / R);
       } else {
@@ -371,7 +375,15 @@ class App {
       { image: `https://picsum.photos/seed/12/800/600?grayscale`, text: 'Palm Trees' }
     ];
     const galleryItems = items && items.length ? items : defaultItems;
-    this.mediasImages = galleryItems.concat(galleryItems);
+    // Only duplicate items if the list is too short to loop properly (e.g. less than 8 items)
+    let finalItems = galleryItems;
+    if (galleryItems.length < 8) {
+      finalItems = galleryItems.concat(galleryItems);
+      if (finalItems.length < 8) {
+        finalItems = finalItems.concat(galleryItems);
+      }
+    }
+    this.mediasImages = finalItems;
     this.medias = this.mediasImages.map((data, index) => {
       return new Media({
         geometry: this.planeGeometry,
@@ -394,13 +406,30 @@ class App {
   }
   recalculateLayout() {
     if (!this.medias || !this.viewport) return;
+    const isPortrait = this.viewport.width < this.viewport.height;
+    
+    // Scale card dimensions dynamically to prevent overlap on narrow screen viewports
+    const maxCardWidth = this.viewport.width * 0.65;
+    const baseHeightRatio = isPortrait ? 0.45 : 0.55;
+    const paddingRatio = isPortrait ? 0.55 : 1.0;
+    
     let currentX = 0;
-    const padding = this.spacing;
+    const padding = this.spacing * paddingRatio;
+    
     this.medias.forEach((media) => {
-      media.plane.scale.y = this.viewport.height * 0.55;
-      media.plane.scale.x = media.plane.scale.y * media.aspectRatio; // Dynamic exact width matching aspect ratio
+      let targetHeight = this.viewport.height * baseHeightRatio;
+      let targetWidth = targetHeight * media.aspectRatio;
+      
+      // Enforce maximum card width constraint on mobile
+      if (targetWidth > maxCardWidth) {
+        targetWidth = maxCardWidth;
+        targetHeight = targetWidth / media.aspectRatio;
+      }
+      
+      media.plane.scale.y = targetHeight;
+      media.plane.scale.x = targetWidth;
       media.plane.program.uniforms.uPlaneSizes.value = [media.plane.scale.x, media.plane.scale.y];
-      media.width = media.plane.scale.x + padding; // Perfect equal spacing
+      media.width = media.plane.scale.x + padding;
     });
     const totalWidth = this.medias.reduce((acc, media) => acc + media.width, 0);
     this.medias.forEach((media) => {
