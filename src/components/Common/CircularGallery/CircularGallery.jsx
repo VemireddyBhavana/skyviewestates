@@ -316,7 +316,7 @@ class App {
       font = 'bold 30px Figtree',
       scrollSpeed = 2,
       scrollEase = 0.05,
-      spacing = 1.5
+      spacing = 1.8
     } = {}
   ) {
     document.documentElement.classList.remove('no-js');
@@ -411,11 +411,11 @@ class App {
     // Scale card dimensions dynamically to prevent overlap on narrow screen viewports
     const maxCardWidth = this.viewport.width * 0.65;
     const baseHeightRatio = isPortrait ? 0.45 : 0.55;
-    const paddingRatio = isPortrait ? 0.55 : 1.0;
+    const paddingRatio = isPortrait ? 0.95 : 1.0;
     
-    let currentX = 0;
     const padding = this.spacing * paddingRatio;
     
+    // Step 1: Compute dimensions for all planes
     this.medias.forEach((media) => {
       let targetHeight = this.viewport.height * baseHeightRatio;
       let targetWidth = targetHeight * media.aspectRatio;
@@ -429,13 +429,30 @@ class App {
       media.plane.scale.y = targetHeight;
       media.plane.scale.x = targetWidth;
       media.plane.program.uniforms.uPlaneSizes.value = [media.plane.scale.x, media.plane.scale.y];
-      media.width = media.plane.scale.x + padding;
     });
-    const totalWidth = this.medias.reduce((acc, media) => acc + media.width, 0);
+    
+    // Step 2: Compute position.x for all planes using the correct edge-to-edge gap formula
+    let currentX = 0;
+    for (let i = 0; i < this.medias.length; i++) {
+      const media = this.medias[i];
+      if (i > 0) {
+        const prevMedia = this.medias[i - 1];
+        // Center-to-center distance = (prevWidth + currentWidth) / 2 + padding
+        const distance = (prevMedia.plane.scale.x + media.plane.scale.x) / 2 + padding;
+        currentX += distance;
+      }
+      media.x = currentX;
+    }
+    
+    // Step 3: Compute total width for looping
+    // For loop wrapping, totalWidth = currentX + (lastWidth + firstWidth) / 2 + padding
+    const firstMedia = this.medias[0];
+    const lastMedia = this.medias[this.medias.length - 1];
+    const totalWidth = currentX + (lastMedia.plane.scale.x + firstMedia.plane.scale.x) / 2 + padding;
+    
     this.medias.forEach((media) => {
       media.widthTotal = totalWidth;
-      media.x = currentX;
-      currentX += media.width;
+      media.width = totalWidth / this.medias.length; // Average card width for snapping logic
     });
   }
   onTouchDown(e) {
@@ -537,7 +554,7 @@ export default function CircularGallery({
   font = 'bold 30px Figtree',
   scrollSpeed = 2,
   scrollEase = 0.05,
-  spacing = 1.5
+  spacing = 1.8
 }) {
   const containerRef = useRef(null);
   const [loadedItems, setLoadedItems] = useState(null);
