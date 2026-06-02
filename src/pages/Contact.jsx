@@ -5,11 +5,109 @@ import ScrollReveal from '../components/Common/ScrollReveal';
 import { IMAGES, CONTACT_INFO } from '../constants/data';
 
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    fullName: '',
+    phone: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+  const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+    // Clear errors when the user types
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Perform validation
+    const newErrors = {};
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = 'Full Name is required';
+    }
+    
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Phone Number is required';
+    } else {
+      const phoneRegex = /^[+]?[0-9\s-]{10,15}$/;
+      if (!phoneRegex.test(formData.phone)) {
+        newErrors.phone = 'Please enter a valid phone number';
+      }
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        newErrors.email = 'Please enter a valid email address';
+      }
+    }
+
+    if (!formData.subject.trim()) {
+      newErrors.subject = 'Subject is required';
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = 'Message is required';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    // Success Submission Flow
     setSubmitted(true);
+
+    // Format WhatsApp message
+    const messageText = `🏡 New Property Inquiry
+
+Name: ${formData.fullName}
+Phone: ${formData.phone}
+Email: ${formData.email}
+Subject: ${formData.subject}
+
+Message:
+${formData.message}`;
+
+    const encodedMessage = encodeURIComponent(messageText);
+    const whatsappUrl = `https://wa.me/919014086453?text=${encodedMessage}`;
+
+    // Open WhatsApp in a new tab
+    window.open(whatsappUrl, '_blank');
+
+    // Show success toast
+    setShowToast(true);
+    setTimeout(() => {
+      setShowToast(false);
+    }, 5000);
+  };
+
+  const handleReset = () => {
+    setSubmitted(false);
+    setFormData({
+      fullName: '',
+      phone: '',
+      email: '',
+      subject: '',
+      message: ''
+    });
+    setErrors({});
   };
 
   return (
@@ -74,11 +172,82 @@ const Contact = () => {
                     <span className="contact-tag">CONTACT US</span>
                     <h3>Send us a Message</h3>
                     <div className="teal-line"></div>
-                    <form className="contact-form-minimal" onSubmit={handleSubmit}>
-                      <input type="text" placeholder="Full Name" required />
-                      <input type="email" placeholder="Email Address" required />
-                      <input type="text" placeholder="Subject" required />
-                      <textarea placeholder="Your Message" rows="5" required></textarea>
+                    <form className="contact-form-minimal" onSubmit={handleSubmit} noValidate>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', textAlign: 'left' }}>
+                        <input
+                          type="text"
+                          name="fullName"
+                          placeholder="Full Name"
+                          value={formData.fullName}
+                          onChange={handleChange}
+                        />
+                        {errors.fullName && (
+                          <span style={{ color: '#e53e3e', fontSize: '0.75rem', fontWeight: '500', paddingLeft: '4px' }}>
+                            {errors.fullName}
+                          </span>
+                        )}
+                      </div>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', textAlign: 'left' }}>
+                        <input
+                          type="tel"
+                          name="phone"
+                          placeholder="Phone Number"
+                          value={formData.phone}
+                          onChange={handleChange}
+                        />
+                        {errors.phone && (
+                          <span style={{ color: '#e53e3e', fontSize: '0.75rem', fontWeight: '500', paddingLeft: '4px' }}>
+                            {errors.phone}
+                          </span>
+                        )}
+                      </div>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', textAlign: 'left' }}>
+                        <input
+                          type="email"
+                          name="email"
+                          placeholder="Email Address"
+                          value={formData.email}
+                          onChange={handleChange}
+                        />
+                        {errors.email && (
+                          <span style={{ color: '#e53e3e', fontSize: '0.75rem', fontWeight: '500', paddingLeft: '4px' }}>
+                            {errors.email}
+                          </span>
+                        )}
+                      </div>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', textAlign: 'left' }}>
+                        <input
+                          type="text"
+                          name="subject"
+                          placeholder="Subject"
+                          value={formData.subject}
+                          onChange={handleChange}
+                        />
+                        {errors.subject && (
+                          <span style={{ color: '#e53e3e', fontSize: '0.75rem', fontWeight: '500', paddingLeft: '4px' }}>
+                            {errors.subject}
+                          </span>
+                        )}
+                      </div>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', textAlign: 'left' }}>
+                        <textarea
+                          name="message"
+                          placeholder="Your Message"
+                          rows="5"
+                          value={formData.message}
+                          onChange={handleChange}
+                        ></textarea>
+                        {errors.message && (
+                          <span style={{ color: '#e53e3e', fontSize: '0.75rem', fontWeight: '500', paddingLeft: '4px' }}>
+                            {errors.message}
+                          </span>
+                        )}
+                      </div>
+
                       <button type="submit" className="btn-primary full-width">SEND MESSAGE</button>
                     </form>
                   </motion.div>
@@ -91,9 +260,38 @@ const Contact = () => {
                     style={{ padding: '20px 0' }}
                   >
                     <div className="success-icon" style={{ width: '60px', height: '60px', fontSize: '1.5rem' }}>✓</div>
-                    <h3>Message Sent</h3>
-                    <p>Thank you for reaching out to Sun Bright Properties. One of our luxury advisors will contact you shortly.</p>
-                    <button className="btn-primary" onClick={() => setSubmitted(false)}>Send Another Message</button>
+                    <h3>Message Ready</h3>
+                    <p>Thank you! Your inquiry is ready to be sent via WhatsApp.</p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px' }}>
+                      <button
+                        className="btn-primary"
+                        onClick={() => {
+                          const messageText = `🏡 New Property Inquiry
+
+Name: ${formData.fullName}
+Phone: ${formData.phone}
+Email: ${formData.email}
+Subject: ${formData.subject}
+
+Message:
+${formData.message}`;
+                          window.open(`https://wa.me/919014086453?text=${encodeURIComponent(messageText)}`, '_blank');
+                        }}
+                      >
+                        Send via WhatsApp
+                      </button>
+                      <button
+                        className="btn-primary"
+                        style={{
+                          background: 'transparent',
+                          border: '1px solid var(--border)',
+                          color: 'var(--text-main)'
+                        }}
+                        onClick={handleReset}
+                      >
+                        Send Another Message
+                      </button>
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -117,6 +315,41 @@ const Contact = () => {
           ></iframe>
         </div>
       </section>
+
+      {/* Success Toast Notification */}
+      <AnimatePresence>
+        {showToast && (
+          <motion.div
+            initial={{ opacity: 0, y: -50, x: '-50%', scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, x: '-50%', scale: 1 }}
+            exit={{ opacity: 0, y: -20, x: '-50%', scale: 0.9 }}
+            transition={{ duration: 0.3 }}
+            style={{
+              position: 'fixed',
+              top: '30px',
+              left: '50%',
+              zIndex: 9999,
+              background: '#ffffff',
+              color: '#1A1A1A',
+              padding: '16px 24px',
+              borderRadius: '12px',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15), 0 0 1px rgba(212, 175, 55, 0.4)',
+              borderLeft: '4px solid #D4AF37',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              fontFamily: "'Poppins', sans-serif",
+              fontSize: '0.9rem',
+              fontWeight: '500',
+              width: 'max-content',
+              maxWidth: '90vw'
+            }}
+          >
+            <span style={{ color: '#D4AF37', fontSize: '1.2rem', fontWeight: 'bold' }}>✓</span>
+            <span>Thank you! Your inquiry is ready to be sent via WhatsApp.</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };
