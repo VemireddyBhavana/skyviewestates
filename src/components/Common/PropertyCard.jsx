@@ -126,7 +126,7 @@ const PropertyCard = ({ property }) => {
               style={{ flex: 2, padding: '8px', fontSize: '0.7rem' }}
               onClick={(e) => {
                 e.preventDefault();
-                window.open(`https://wa.me/915551234678?text=I'm interested in ${property.title} (${property.id})`, '_blank');
+                window.open(`https://wa.me/917799250555?text=Hi Sun Bright Properties, I am interested in ${encodeURIComponent(property.title)} (ID: ${property.id})`, '_blank');
               }}
             >
               WhatsApp Inquiry

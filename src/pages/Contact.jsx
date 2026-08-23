@@ -86,7 +86,7 @@ Message:
 ${formData.message}`;
 
     const encodedMessage = encodeURIComponent(messageText);
-    const whatsappUrl = `https://wa.me/919014086453?text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/917799250555?text=${encodedMessage}`;
 
     // Open WhatsApp in a new tab
     window.open(whatsappUrl, '_blank');
@@ -275,7 +275,7 @@ Subject: ${formData.subject}
 
 Message:
 ${formData.message}`;
-                          window.open(`https://wa.me/919014086453?text=${encodeURIComponent(messageText)}`, '_blank');
+                          window.open(`https://wa.me/917799250555?text=${encodeURIComponent(messageText)}`, '_blank');
                         }}
                       >
                         Send via WhatsApp
