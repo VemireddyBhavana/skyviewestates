@@ -62,6 +62,7 @@ const Preloader = () => {
             filter: "blur(20px)",
             transition: { duration: 0.8, ease: "easeInOut" }
           }}
+          className="preloader-overlay"
           style={{
             position: 'fixed',
             inset: 0,

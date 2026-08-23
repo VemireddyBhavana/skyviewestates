@@ -978,8 +978,46 @@ function SplashCursor({
       return hash;
     }
 
+    function isExcludedArea(clientX, clientY, target) {
+      if (target && typeof target.closest === 'function') {
+        if (
+          target.closest(
+            '.circular-gallery, .trust-gallery-section, .video-modal-overlay, .video-modal-container, .video-wrapper, video, .modal-video-element, .preloader-overlay, .live-feed-modal, .quiz-modal'
+          )
+        ) {
+          return true;
+        }
+      }
+
+      const activeModal = document.querySelector(
+        '.video-modal-overlay, .preloader-overlay, .live-feed-modal, .quiz-modal'
+      );
+      if (activeModal) {
+        return true;
+      }
+
+      const excluded = document.querySelectorAll(
+        '.circular-gallery, .trust-gallery-section, .video-modal-overlay, .video-modal-container, .video-wrapper, video, .modal-video-element, .preloader-overlay, .live-feed-modal, .quiz-modal'
+      );
+      for (let i = 0; i < excluded.length; i++) {
+        const rect = excluded[i].getBoundingClientRect();
+        if (
+          clientX >= rect.left &&
+          clientX <= rect.right &&
+          clientY >= rect.top &&
+          clientY <= rect.bottom
+        ) {
+          return true;
+        }
+      }
+      return false;
+    }
+
     // Named event handlers for proper cleanup
     function handleMouseDown(e) {
+      if (isExcludedArea(e.clientX, e.clientY, e.target)) {
+        return;
+      }
       let pointer = pointers[0];
       let posX = scaleByPixelRatio(e.clientX);
       let posY = scaleByPixelRatio(e.clientY);
@@ -989,6 +1027,9 @@ function SplashCursor({
 
     let firstMouseMoveHandled = false;
     function handleMouseMove(e) {
+      if (isExcludedArea(e.clientX, e.clientY, e.target)) {
+        return;
+      }
       let pointer = pointers[0];
       let posX = scaleByPixelRatio(e.clientX);
       let posY = scaleByPixelRatio(e.clientY);
@@ -1003,6 +1044,11 @@ function SplashCursor({
 
     function handleTouchStart(e) {
       const touches = e.targetTouches;
+      if (touches.length > 0) {
+        if (isExcludedArea(touches[0].clientX, touches[0].clientY, e.target)) {
+          return;
+        }
+      }
       let pointer = pointers[0];
       for (let i = 0; i < touches.length; i++) {
         let posX = scaleByPixelRatio(touches[i].clientX);
@@ -1013,6 +1059,11 @@ function SplashCursor({
 
     function handleTouchMove(e) {
       const touches = e.targetTouches;
+      if (touches.length > 0) {
+        if (isExcludedArea(touches[0].clientX, touches[0].clientY, e.target)) {
+          return;
+        }
+      }
       let pointer = pointers[0];
       for (let i = 0; i < touches.length; i++) {
         let posX = scaleByPixelRatio(touches[i].clientX);
