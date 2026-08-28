@@ -230,6 +230,15 @@ class Media {
       texture.image = img;
       this.program.uniforms.uImageSizes.value = [img.naturalWidth, img.naturalHeight];
     };
+    img.onerror = () => {
+      const fallbackImg = new Image();
+      fallbackImg.crossOrigin = 'anonymous';
+      fallbackImg.onload = () => {
+        texture.image = fallbackImg;
+        this.program.uniforms.uImageSizes.value = [fallbackImg.naturalWidth, fallbackImg.naturalHeight];
+      };
+      fallbackImg.src = "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1000";
+    };
     img.src = this.image;
   }
   createMesh() {

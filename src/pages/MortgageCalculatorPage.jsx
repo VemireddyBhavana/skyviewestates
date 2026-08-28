@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '../components/Layout/Navbar';
 import { IMAGES } from '../constants/data';
-import ScrollReveal from '../components/Common/ScrollReveal';
+import AnimatedSection from '../components/Common/AnimatedSection';
 
 const MortgageCalculatorPage = () => {
   const [loanAmount, setLoanAmount] = useState(10000000);
@@ -70,7 +70,7 @@ const MortgageCalculatorPage = () => {
 
       <div className="section-container" style={{ padding: '80px 20px' }}>
         <div className="finance-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '40px' }}>
-          <ScrollReveal direction="left">
+          <AnimatedSection direction="left">
             <div className="calculator-card" style={{ background: '#fff', padding: '40px', borderRadius: '20px', boxShadow: '0 20px 60px rgba(0,0,0,0.05)', border: '1px solid #eee' }}>
               <h2 style={{ marginBottom: '30px', fontSize: '1.8rem' }}>EMI Calculator</h2>
               
@@ -114,9 +114,9 @@ const MortgageCalculatorPage = () => {
                 </select>
               </div>
             </div>
-          </ScrollReveal>
+          </AnimatedSection>
 
-          <ScrollReveal direction="right">
+          <AnimatedSection direction="right">
             <div className="results-card" style={{ background: '#0a0a0a', color: '#fff', padding: '40px', borderRadius: '20px', height: '100%' }}>
               <h2 style={{ marginBottom: '40px', fontSize: '1.8rem', color: '#D4AF37' }}>Your Repayment Summary</h2>
               
@@ -149,11 +149,11 @@ const MortgageCalculatorPage = () => {
                 Download Repayment Schedule
               </button>
             </div>
-          </ScrollReveal>
+          </AnimatedSection>
         </div>
 
         <div className="finance-info" style={{ marginTop: '100px' }}>
-          <ScrollReveal>
+          <AnimatedSection>
             <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto' }}>
               <h2 style={{ fontSize: '2.5rem', marginBottom: '20px' }}>Partner Banks & Schemes</h2>
               <p style={{ color: '#666', fontSize: '1.1rem' }}>
@@ -165,7 +165,7 @@ const MortgageCalculatorPage = () => {
                 ))}
               </div>
             </div>
-          </ScrollReveal>
+          </AnimatedSection>
         </div>
       </div>
     </div>

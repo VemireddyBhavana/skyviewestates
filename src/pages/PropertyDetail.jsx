@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Layout/Navbar';
 import { PROPERTIES } from '../constants/data';
-import ScrollReveal from '../components/Common/ScrollReveal';
+import AnimatedSection from '../components/Common/AnimatedSection';
 import EMICalculator from '../components/Common/EMICalculator';
 
 const PropertyDetail = () => {
@@ -74,7 +74,7 @@ const PropertyDetail = () => {
       <div className="section-container">
         <div className="detail-main-grid">
           <div className="detail-info-col">
-            <ScrollReveal direction="up">
+            <AnimatedSection direction="up">
               <div className="detail-specs-grid">
                 <div className="spec-item">
                   <span className="spec-label">Bedrooms</span>
@@ -93,9 +93,9 @@ const PropertyDetail = () => {
                   <span className="spec-value">#SKY-{property.id}</span>
                 </div>
               </div>
-            </ScrollReveal>
+            </AnimatedSection>
 
-            <ScrollReveal direction="up" delay={0.2}>
+            <AnimatedSection direction="up" delay={0.2}>
               <div className="detail-description">
                 <h2>Description</h2>
                 <div className="teal-line left" style={{ margin: '20px 0' }}></div>
@@ -107,10 +107,10 @@ const PropertyDetail = () => {
                   this home is designed for the most discerning homeowners.
                 </p>
               </div>
-            </ScrollReveal>
+            </AnimatedSection>
 
             {/* Premium Media Showcase Dashboard */}
-            <ScrollReveal direction="up" delay={0.25}>
+            <AnimatedSection direction="up" delay={0.25}>
               <div className="property-media-dashboard">
                 <h2>Property Media Showcase</h2>
                 <div className="teal-line left" style={{ margin: '20px 0' }}></div>
@@ -148,7 +148,7 @@ const PropertyDetail = () => {
                   </div>
                 </div>
               </div>
-            </ScrollReveal>
+            </AnimatedSection>
 
             {/* Embedded styles for Media Showcase */}
             <style dangerouslySetInnerHTML={{ __html: `
@@ -271,7 +271,7 @@ const PropertyDetail = () => {
               }
             `}} />
 
-            <ScrollReveal direction="up" delay={0.3}>
+            <AnimatedSection direction="up" delay={0.3}>
               <div className="detail-features">
                 <h2>Premium Features</h2>
                 <div className="features-list">
@@ -280,13 +280,13 @@ const PropertyDetail = () => {
                   ))}
                 </div>
               </div>
-            </ScrollReveal>
+            </AnimatedSection>
 
-            <ScrollReveal direction="up" delay={0.4}>
+            <AnimatedSection direction="up" delay={0.4}>
               <EMICalculator propertyPrice={property.price} />
-            </ScrollReveal>
+            </AnimatedSection>
 
-            <ScrollReveal direction="up" delay={0.5}>
+            <AnimatedSection direction="up" delay={0.5}>
               <div className="detail-floor-plan" style={{ marginTop: '40px' }}>
                 <h2>Architectural Floor Plan</h2>
                 <div className="floor-plan-container" style={{ margin: '20px 0', background: '#f5f5f5', padding: '20px', borderRadius: '15px' }}>
@@ -296,11 +296,11 @@ const PropertyDetail = () => {
                   * This floor plan represents the standard layout. Custom modifications are possible during construction.
                 </p>
               </div>
-            </ScrollReveal>
+            </AnimatedSection>
           </div>
 
           <div className="detail-sidebar">
-            <ScrollReveal direction="left">
+            <AnimatedSection direction="left">
               <div className="enquiry-card">
                 <AnimatePresence mode="wait">
                   {bookingStep === 'select' && (
@@ -417,10 +417,10 @@ const PropertyDetail = () => {
                       style={{ textAlign: 'center' }}
                     >
                       <div style={{ fontSize: '3rem', color: '#4caf50' }}>✓</div>
-                      <h3>Payment Successful!</h3>
-                      <p>Your design reservation is confirmed for May {selectedDate}, 2026.</p>
-                      <button className="btn-primary" style={{ width: '100%' }} onClick={() => navigate('/construction-setup')}>
-                        Go to Construction Setup
+                      <h3>Reservation Confirmed!</h3>
+                      <p>Your design reservation is confirmed for May {selectedDate}, 2026. Our team will contact you shortly at your registered number.</p>
+                      <button className="btn-primary" style={{ width: '100%' }} onClick={() => navigate('/designs')}>
+                        Explore More Designs
                       </button>
                     </motion.div>
                   )}
@@ -452,7 +452,7 @@ const PropertyDetail = () => {
                   </div>
                 </div>
               </div>
-            </ScrollReveal>
+            </AnimatedSection>
           </div>
         </div>
       </div>

@@ -1,7 +1,21 @@
-import { useState, useEffect } from 'react';
+/**
+ * Navbar.jsx — Enhanced with GSAP premium animations
+ *
+ * Animations added (NO logic/UI changes):
+ * - Page load: navbar fade-in, logo slide-in, menu items stagger
+ * - Scroll direction: navbar hides when scrolling down, reveals on up
+ * - Backdrop blur increases when scrolled (existing 'scrolled' class)
+ * - Mobile menu: links stagger in/out
+ *
+ * All original nav links, favorites badge, and phone CTA are preserved.
+ */
+
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { gsap } from 'gsap';
 import { useFavorites } from '../../context/FavoritesContext';
 import Logo from '../Common/Logo';
+import { navbarEntrance } from '../../animations/animUtils';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -9,13 +23,85 @@ const Navbar = () => {
   const location = useLocation();
   const { favorites } = useFavorites();
 
+  // ─── Refs for animation targets ────────────────────────────────────────────
+  const navRef     = useRef(null);
+  const logoRef    = useRef(null);
+  const linksRef   = useRef(null);
+  const lastScrollY = useRef(0);
+  const ticking     = useRef(false);
+
+  // ─── Page-load entrance animation ──────────────────────────────────────────
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const nav   = navRef.current;
+    const logo  = logoRef.current;
+    const links = linksRef.current?.querySelectorAll('li') || [];
+
+    if (nav && logo && links.length) {
+      navbarEntrance(nav, logo, Array.from(links));
+    }
   }, []);
+
+  // ─── Scroll: backdrop + hide/show behavior ─────────────────────────────────
+  useEffect(() => {
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const handleScroll = () => {
+      if (ticking.current) return;
+
+      window.requestAnimationFrame(() => {
+        const currentY = window.scrollY;
+
+        // Scrolled state (backdrop blur intensification)
+        setScrolled(currentY > 50);
+
+        // Hide/show navbar based on direction — skip if mobile menu is open
+        if (!isMenuOpen && !prefersReduced) {
+          const nav = navRef.current;
+          if (!nav) { ticking.current = false; return; }
+
+          if (currentY > lastScrollY.current && currentY > 120) {
+            // Scrolling DOWN → hide navbar
+            nav.classList.add('hidden-up');
+          } else {
+            // Scrolling UP → show navbar
+            nav.classList.remove('hidden-up');
+          }
+        }
+
+        lastScrollY.current = currentY;
+        ticking.current = false;
+      });
+
+      ticking.current = true;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isMenuOpen]);
+
+  // ─── Mobile menu link stagger animation ────────────────────────────────────
+  useEffect(() => {
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
+
+    const links = linksRef.current?.querySelectorAll('li');
+    if (!links?.length) return;
+
+    if (isMenuOpen) {
+      gsap.fromTo(
+        links,
+        { opacity: 0, x: -20 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.4,
+          stagger: 0.07,
+          ease: 'power3.out',
+          delay: 0.1,
+        }
+      );
+    }
+  }, [isMenuOpen]);
 
   const isActive = (path) => {
     if (path === '/home' && (location.pathname === '/' || location.pathname === '/home')) return true;
@@ -23,17 +109,25 @@ const Navbar = () => {
   };
 
   return (
-    <nav className={`navbar ${scrolled ? 'scrolled' : ''} ${isMenuOpen ? 'menu-open' : ''}`}>
+    <nav
+      ref={navRef}
+      className={`navbar ${scrolled ? 'scrolled' : ''} ${isMenuOpen ? 'menu-open' : ''}`}
+    >
       <div className="navbar-container">
-        <Logo />
-        
-        <div className={`hamburger ${isMenuOpen ? 'active' : ''}`} onClick={() => setIsMenuOpen(!isMenuOpen)}>
+        <span ref={logoRef}>
+          <Logo />
+        </span>
+
+        <div
+          className={`hamburger ${isMenuOpen ? 'active' : ''}`}
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
           <span></span>
           <span></span>
           <span></span>
         </div>
 
-        <ul className={`nav-links ${isMenuOpen ? 'mobile-active' : ''}`}>
+        <ul ref={linksRef} className={`nav-links ${isMenuOpen ? 'mobile-active' : ''}`}>
           <li><Link to="/home" className={isActive('/home') ? 'active' : ''} onClick={() => setIsMenuOpen(false)}>Home</Link></li>
           <li><Link to="/about" className={isActive('/about') ? 'active' : ''} onClick={() => setIsMenuOpen(false)}>About Us</Link></li>
           <li><Link to="/designs" className={isActive('/designs') ? 'active' : ''} onClick={() => setIsMenuOpen(false)}>Designs</Link></li>

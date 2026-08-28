@@ -1,7 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
 
 html {
-  scroll-behavior: smooth;
+  /* scroll-behavior: smooth; — Disabled: Lenis handles smooth scrolling */
+  scroll-behavior: auto;
+}
+
+/* Reduced-motion: disable CSS transitions + animations */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 :root {
@@ -120,3 +128,14 @@ p {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* GSAP Pin Spacer & Dark Section background fixes */
+.pin-spacer {
+  background-color: transparent !important;
+}
+
+.dark-section-bg,
+.dark-section-bg + .pin-spacer {
+  background-color: #050810 !important;
+}
+

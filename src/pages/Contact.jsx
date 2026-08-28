@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Layout/Navbar';
-import ScrollReveal from '../components/Common/ScrollReveal';
+import AnimatedSection from '../components/Common/AnimatedSection';
+import RippleButton from '../components/Common/RippleButton';
 import { IMAGES, CONTACT_INFO } from '../constants/data';
 
 const Contact = () => {
@@ -112,14 +113,14 @@ ${formData.message}`;
 
   return (
     <>
-      <header className="hero-section small" style={{ backgroundImage: `url(${IMAGES.contact})` }}>
+      <header className="hero-section small" style={{ backgroundImage: `url(${IMAGES.contact})`, willChange: 'transform' }}>
         <div className="hero-overlay">
           <Navbar />
           <div className="hero-content">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             >
               <span className="hero-subtitle">Get in Touch</span>
               <h1 className="hero-title">Begin Your Journey to Exceptional Living</h1>
@@ -130,7 +131,7 @@ ${formData.message}`;
 
       <div className="section-container">
         <div className="contact-page-grid">
-          <ScrollReveal direction="left">
+          <AnimatedSection direction="left" delay={0.1}>
             <div className="contact-welcome-container">
               <h2>We are excited to connect with you and assist you with your real estate needs</h2>
               <div className="teal-line left"></div>
@@ -139,7 +140,7 @@ ${formData.message}`;
                 <div className="detail-item">
                   <span className="detail-tag">PHONE</span>
                   <p>
-                    <a href={`tel:${CONTACT_INFO.phone.replace(/[\s-]/g, '')}`} className="contact-detail-link">
+                    <a href={`tel:${CONTACT_INFO.phone.replace(/[\s-]/g, '')}`} className="contact-detail-link anim-link">
                       P: {CONTACT_INFO.phone}
                     </a>
                   </p>
@@ -147,7 +148,7 @@ ${formData.message}`;
                 <div className="detail-item">
                   <span className="detail-tag">EMAIL</span>
                   <p>
-                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=sunbrightproperties99@gmail.com" target="_blank" rel="noopener noreferrer" className="contact-detail-link">
+                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=sunbrightproperties99@gmail.com" target="_blank" rel="noopener noreferrer" className="contact-detail-link anim-link">
                       {CONTACT_INFO.email}
                     </a>
                   </p>
@@ -158,9 +159,9 @@ ${formData.message}`;
                 </div>
               </div>
             </div>
-          </ScrollReveal>
+          </AnimatedSection>
 
-          <ScrollReveal direction="right">
+          <AnimatedSection direction="right" delay={0.2}>
             <div className="reach-out-card">
               <AnimatePresence mode="wait">
                 {!submitted ? (
@@ -248,7 +249,7 @@ ${formData.message}`;
                         )}
                       </div>
 
-                      <button type="submit" className="btn-primary full-width">SEND MESSAGE</button>
+                      <RippleButton type="submit" className="btn-primary full-width">SEND MESSAGE</RippleButton>
                     </form>
                   </motion.div>
                 ) : (
@@ -263,7 +264,7 @@ ${formData.message}`;
                     <h3>Message Ready</h3>
                     <p>Thank you! Your inquiry is ready to be sent via WhatsApp.</p>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px' }}>
-                      <button
+                      <RippleButton
                         className="btn-primary"
                         onClick={() => {
                           const messageText = `🏡 New Property Inquiry
@@ -279,8 +280,8 @@ ${formData.message}`;
                         }}
                       >
                         Send via WhatsApp
-                      </button>
-                      <button
+                      </RippleButton>
+                      <RippleButton
                         className="btn-primary"
                         style={{
                           background: 'transparent',
@@ -290,31 +291,33 @@ ${formData.message}`;
                         onClick={handleReset}
                       >
                         Send Another Message
-                      </button>
+                      </RippleButton>
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
-          </ScrollReveal>
+          </AnimatedSection>
         </div>
       </div>
 
       {/* Map Section */}
-      <section className="map-section">
-        <div className="map-container">
-          <iframe 
-            src="https://maps.google.com/maps?q=18.6722592,78.1060717&z=17&output=embed"
-            width="100%" 
-            height="100%" 
-            style={{ border: 0 }} 
-            allowFullScreen="" 
-            loading="lazy" 
-            referrerPolicy="no-referrer-when-downgrade"
-            title="Google Map"
-          ></iframe>
-        </div>
-      </section>
+      <AnimatedSection direction="fade" delay={0.2} duration={1.2}>
+        <section className="map-section">
+          <div className="map-container">
+            <iframe 
+              src="https://maps.google.com/maps?q=18.6722592,78.1060717&z=17&output=embed"
+              width="100%" 
+              height="100%" 
+              style={{ border: 0 }} 
+              allowFullScreen="" 
+              loading="lazy" 
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Google Map"
+            ></iframe>
+          </div>
+        </section>
+      </AnimatedSection>
 
       {/* Success Toast Notification */}
       <AnimatePresence>

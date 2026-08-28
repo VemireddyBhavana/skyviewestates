@@ -1,13 +1,18 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { gsap } from 'gsap';
 import Logo from '../Common/Logo';
 import { CONTACT_INFO } from '../../constants/data';
+import { staggerChildren } from '../../animations/animUtils';
+import { scrollTo } from '../../animations/useLenis';
 
 const Footer = () => {
   const [showLiveFeed, setShowLiveFeed] = useState(false);
   const [footerSearch, setFooterSearch] = useState('');
   const navigate = useNavigate();
+  const gridRef = useRef(null);
+  const bottomRef = useRef(null);
 
   const handleFooterSearch = (e) => {
     e.preventDefault();
@@ -17,9 +22,53 @@ const Footer = () => {
     }
   };
 
+  useEffect(() => {
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
+
+    const tweens = [];
+
+    // Stagger footer columns
+    if (gridRef.current) {
+      tweens.push(
+        staggerChildren(gridRef.current, '.footer-col', {
+          y: 40,
+          duration: 0.8,
+          stagger: 0.1,
+          start: 'top 90%',
+        })
+      );
+    }
+
+    // Fade up footer bottom
+    if (bottomRef.current) {
+      tweens.push(
+        gsap.fromTo(bottomRef.current, 
+          { opacity: 0, y: 20 },
+          { 
+            opacity: 1, 
+            y: 0, 
+            duration: 0.8, 
+            ease: 'power3.out', 
+            scrollTrigger: {
+              trigger: bottomRef.current,
+              start: 'top 95%',
+              toggleActions: 'play none none none'
+            }
+          }
+        )
+      );
+    }
+
+    return () => tweens.forEach((t) => {
+      if (t?.scrollTrigger) t.scrollTrigger.kill();
+      else if (typeof t?.kill === 'function') t.kill();
+    });
+  }, []);
+
   return (
     <footer className="footer-section section-container">
-      <div className="footer-grid">
+      <div ref={gridRef} className="footer-grid">
         <div className="footer-col">
           <Logo />
         </div>
@@ -50,7 +99,7 @@ const Footer = () => {
         </div>
       </div>
       
-      <div className="footer-bottom">
+      <div ref={bottomRef} className="footer-bottom">
         <p>Copyright © {new Date().getFullYear()} Sun Bright Properties Company</p>
         <div className="footer-bottom-right">
           <div className="footer-socials">
@@ -66,7 +115,7 @@ const Footer = () => {
               <i className="fa-solid fa-camera"></i>
             </button>
           </div>
-          <button className="back-to-top" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+          <button className="back-to-top" onClick={() => scrollTo(0)}>
             ↑
           </button>
         </div>

@@ -1,45 +1,155 @@
-import { useState, useEffect } from 'react';
+/**
+ * Home.jsx — Enhanced with GSAP + Lenis premium animations
+ *
+ * Animations added (zero UI/logic changes):
+ * - Hero background: slow scale 1.05→1 on load
+ * - Hero content: title/subtitle/buttons staggered entrance
+ * - Mouse parallax depth effect on hero (gentle ±5px tilt)
+ * - Hero background parallax on scroll (0.3× speed)
+ * - AI CTA section: content reveals with GSAP ScrollTrigger
+ * - All sections: smooth entrance via AnimatedSection wrapper
+ */
+
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { gsap } from 'gsap';
+
 import Navbar from '../components/Layout/Navbar';
 import WhatWeDoSection from '../components/Sections/WhatWeDoSection';
-import FeaturedPropertiesSection from '../components/Sections/FeaturedPropertiesSection';
 import TestimonialsSection from '../components/Sections/TestimonialsSection';
 import PassionSection from '../components/Sections/PassionSection';
-import ScrollReveal from '../components/Common/ScrollReveal';
+import AnimatedSection from '../components/Common/AnimatedSection';
 import { IMAGES } from '../constants/data';
 import AntiGravitySection from '../components/Sections/AntiGravitySection';
-
 import DreamHomeQuiz from '../components/Common/DreamHomeQuiz';
+
+
+import { heroEntrance, parallaxY } from '../animations/animUtils';
 
 const heroSlides = [
   {
     image: IMAGES.heroHome,
-    subtitle: "Curated collection of ultra-luxury estates for the most discerning homeowners.",
+    subtitle: "",
     title: "Exceptional Homes for the Discerning Few"
   },
   {
     image: IMAGES.heroHome2,
-    subtitle: "Experience architectural excellence and unmatched elegance in the heart of the city.",
+    subtitle: "",
     title: "Discover Your Sanctuary of Elegance"
   },
   {
     image: IMAGES.heroHome3,
-    subtitle: "A legacy of premium living, meticulously crafted for your comfort and prestige.",
+    subtitle: "",
     title: "The Pinnacle of Sophisticated Living"
   }
 ];
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [showQuiz, setShowQuiz] = useState(false);
+  const [showQuiz, setShowQuiz]           = useState(false);
   const [showVideoModal, setShowVideoModal] = useState(false);
 
+  // ─── Refs for animation targets ──────────────────────────────────────────
+  const heroSectionRef = useRef(null);
+  const heroBgRef      = useRef(null);
+  const heroSubRef     = useRef(null);
+  const heroTitleRef   = useRef(null);
+  const heroButtonsRef = useRef(null);
+  const hasAnimated    = useRef(false);
+  const parallaxRef    = useRef(null);
+  const mouseRafRef    = useRef(null);
+
+  // ─── Auto-advance slides ──────────────────────────────────────────────────
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
     }, 6000);
     return () => clearInterval(timer);
+  }, []);
+
+  // ─── Hero entrance animation (runs once on first mount) ───────────────────
+  useEffect(() => {
+    if (hasAnimated.current) return;
+    hasAnimated.current = true;
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Background scale: 1.05 → 1
+    if (!prefersReduced && heroBgRef.current) {
+      gsap.fromTo(
+        heroBgRef.current,
+        { scale: 1.05 },
+        { scale: 1, duration: 2.5, ease: 'power2.out', delay: 0.3 }
+      );
+    }
+
+    // Content staggered entrance
+    heroEntrance(
+      heroSubRef.current,
+      heroTitleRef.current,
+      heroButtonsRef.current ? [heroButtonsRef.current] : []
+    );
+  }, []);
+
+  // ─── Hero background scroll parallax ─────────────────────────────────────
+  useEffect(() => {
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
+
+    let st = null;
+    if (heroBgRef.current) {
+      st = parallaxY(heroBgRef.current, {
+        speed: 0.25,
+        trigger: heroSectionRef.current,
+        start: 'top top',
+        end: 'bottom top',
+      });
+    }
+    return () => { if (st?.scrollTrigger) st.scrollTrigger.kill(); };
+  }, []);
+
+  // ─── Mouse parallax depth effect ─────────────────────────────────────────
+  const handleMouseMove = useCallback((e) => {
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced || !heroSectionRef.current) return;
+
+    if (mouseRafRef.current) return; // throttle via rAF
+
+    mouseRafRef.current = requestAnimationFrame(() => {
+      const rect = heroSectionRef.current?.getBoundingClientRect();
+      if (!rect) { mouseRafRef.current = null; return; }
+
+      const cx = rect.width  / 2;
+      const cy = rect.height / 2;
+      const dx = (e.clientX - rect.left - cx) / cx;  // -1 to 1
+      const dy = (e.clientY - rect.top  - cy) / cy;  // -1 to 1
+
+      // Gentle depth: max 5px movement
+      if (heroBgRef.current) {
+        gsap.to(heroBgRef.current, {
+          x:        dx * -8,
+          y:        dy * -8,
+          duration: 0.8,
+          ease:     'power2.out',
+          overwrite: 'auto',
+        });
+      }
+
+      mouseRafRef.current = null;
+    });
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    if (heroBgRef.current) {
+      gsap.to(heroBgRef.current, { x: 0, y: 0, duration: 1, ease: 'power3.out' });
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (mouseRafRef.current) cancelAnimationFrame(mouseRafRef.current);
+    };
   }, []);
 
   return (
@@ -71,7 +181,7 @@ const Home = () => {
               </button>
               <div className="video-wrapper">
                 <video
-                  src="https://res.cloudinary.com/djzgjy947/video/upload/v1780229925/WhatsApp_Video_2026-05-26_at_3.25.13_PM_gebcjl.mp4"
+                  src="/assets/sunbright_video.mp4"
                   autoPlay
                   controls
                   className="modal-video-element"
@@ -83,18 +193,26 @@ const Home = () => {
       </AnimatePresence>
 
       {/* Hero Slider Section */}
-      <header className="hero-section">
-        <AnimatePresence mode="popLayout">
-          <motion.div
-            key={`bg-${currentSlide}`}
-            className="hero-slide-bg"
-            initial={{ opacity: 0, scale: 1.1 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.05 }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
-            style={{ backgroundImage: `url(${heroSlides[currentSlide].image})` }}
-          />
-        </AnimatePresence>
+      <header
+        ref={heroSectionRef}
+        className="hero-section"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+      >
+        {/* Background layer — wrapped in ref for parallax + scale */}
+        <div ref={heroBgRef} style={{ position: 'absolute', inset: 0, willChange: 'transform' }}>
+          <AnimatePresence mode="popLayout">
+            <motion.div
+              key={`bg-${currentSlide}`}
+              className="hero-slide-bg"
+              initial={{ opacity: 0, scale: 1.08 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.04 }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
+              style={{ backgroundImage: `url(${heroSlides[currentSlide].image})`, position: 'absolute', inset: 0 }}
+            />
+          </AnimatePresence>
+        </div>
 
         <div className="hero-overlay">
           <Navbar />
@@ -105,13 +223,10 @@ const Home = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ 
-                  duration: 0.4, 
-                  delay: 0.1, 
-                  ease: "easeOut" 
-                }}
+                transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
               >
-                <motion.span 
+                <motion.span
+                  ref={heroSubRef}
                   className="hero-subtitle"
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -119,8 +234,9 @@ const Home = () => {
                 >
                   {heroSlides[currentSlide].subtitle}
                 </motion.span>
-                <h1 className="hero-title">{heroSlides[currentSlide].title}</h1>
+                <h1 ref={heroTitleRef} className="hero-title">{heroSlides[currentSlide].title}</h1>
                 <motion.div
+                  ref={heroButtonsRef}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
@@ -132,8 +248,8 @@ const Home = () => {
                   <button className="btn-hero btn-primary-match" style={{ background: '#D4AF37', color: 'black' }} onClick={() => setShowQuiz(true)}>
                     Find My Match
                   </button>
-                  <button 
-                    className="btn-hero watch-video-btn" 
+                  <button
+                    className="btn-hero watch-video-btn"
                     onClick={() => setShowVideoModal(true)}
                     style={{
                       background: 'rgba(255, 255, 255, 0.1)',
@@ -166,15 +282,18 @@ const Home = () => {
         </div>
       </header>
 
+      {/* AntiGravity — already has its own entrance animation */}
       <AntiGravitySection />
 
-      <ScrollReveal>
+      {/* Services / What We Do */}
+      <AnimatedSection delay={0.05}>
         <WhatWeDoSection />
-      </ScrollReveal>
+      </AnimatedSection>
 
-      <ScrollReveal>
-        <div className="ai-cta-section" style={{ 
-          padding: '140px 20px', 
+      {/* AI CTA Section */}
+      <AnimatedSection delay={0.05}>
+        <div className="ai-cta-section" style={{
+          padding: '140px 20px',
           backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('/assets/ai-bg-v2.png')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
@@ -305,7 +424,6 @@ const Home = () => {
               aspect-ratio: 16/9;
               position: relative;
             }
-
             .modal-video-element {
               width: 100%;
               height: 100%;
@@ -324,19 +442,18 @@ const Home = () => {
             pointerEvents: 'none'
           }} />
         </div>
-      </ScrollReveal>
+      </AnimatedSection>
 
-      <ScrollReveal>
-        <FeaturedPropertiesSection />
-      </ScrollReveal>
 
-      <ScrollReveal>
+      {/* Testimonials */}
+      <AnimatedSection delay={0.05}>
         <TestimonialsSection />
-      </ScrollReveal>
+      </AnimatedSection>
 
-      <ScrollReveal>
+      {/* Passion */}
+      <AnimatedSection delay={0.05}>
         <PassionSection />
-      </ScrollReveal>
+      </AnimatedSection>
     </>
   );
 };

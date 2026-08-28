@@ -1,15 +1,45 @@
+import { useRef, useEffect } from 'react';
 import { FOUNDERS } from '../../constants/data';
+import { fadeUp, scaleReveal, staggerChildren } from '../../animations/animUtils';
 
 const MeetFoundersSection = () => {
+  const sectionRef = useRef(null);
+  const imgRef = useRef(null);
+  const contentRef = useRef(null);
+  
   const founder = FOUNDERS[0]; // Since there is exactly 1 founder
 
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const tweens = [];
+
+    if (imgRef.current) {
+      tweens.push(scaleReveal(imgRef.current, { duration: 1, start: 'top 85%' }));
+    }
+
+    if (contentRef.current) {
+      tweens.push(
+        staggerChildren(contentRef.current, '.section-tag, h2, .teal-line, .founder-title-badge-row, p, .founder-divider, .founder-footer-row', {
+          y: 35,
+          duration: 0.8,
+          stagger: 0.1,
+          start: 'top 85%',
+        })
+      );
+    }
+
+    return () => tweens.forEach((t) => { if (t?.scrollTrigger) t.scrollTrigger.kill(); });
+  }, []);
+
   return (
-    <section className="section-container meet-founders-section">
+    <section ref={sectionRef} className="section-container meet-founders-section">
       <div className="meet-founders-grid">
-        <div className="meet-founders-img">
+        <div ref={imgRef} className="meet-founders-img">
           <img src={founder.image} alt={founder.name} />
         </div>
-        <div className="meet-founders-content">
+        <div ref={contentRef} className="meet-founders-content">
           <span className="section-tag">
             OUR LEADERSHIP
           </span>

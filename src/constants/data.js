@@ -63,7 +63,7 @@ export const FOUNDERS = [
     id: 1,
     name: "Madivar Sai Basava",
     role: "Founder & CEO",
-    image: "https://res.cloudinary.com/djzgjy947/image/upload/v1780038032/WhatsApp_Image_2026-05-29_at_12.29.27_PM_qwwnqo.jpg",
+    image: "/assets/founder.jpg",
     bio: "Passionate entrepreneur and real estate visionary focused on creating premium property experiences and modern luxury home solutions across Hyderabad.",
     location: "Hyderabad, Telangana",
     socials: {

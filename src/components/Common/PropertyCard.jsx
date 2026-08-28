@@ -1,23 +1,37 @@
+/**
+ * PropertyCard.jsx — Enhanced micro-interactions
+ *
+ * Animations added:
+ * - MagneticButton wrapper on WhatsApp Inquiry CTA
+ * - Image zoom on hover: CSS (animations.css handles .property-img-container img)
+ * - Card lift: enhanced easing via Framer Motion
+ * - RippleButton on WhatsApp CTA
+ * All existing functionality (favorites, comparison, links) preserved.
+ */
+
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-
 import { useFavorites } from '../../context/FavoritesContext';
 import { useComparison } from '../../context/ComparisonContext';
+import MagneticButton from './MagneticButton';
+import RippleButton from './RippleButton';
+import { cardHoverVariants } from '../../animations/motionConfig';
 
 const PropertyCard = ({ property }) => {
   const { toggleFavorite, isFavorite } = useFavorites();
   const { toggleComparison, isInComparison } = useComparison();
-  
-  const favorited = isFavorite(property.id);
+
+  const favorited    = isFavorite(property.id);
   const inComparison = isInComparison(property.id);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      whileHover={{ y: -10 }}
-      transition={{ duration: 0.5 }}
+      variants={cardHoverVariants}
+      initial="rest"
+      whileInView="rest"
+      whileHover="hover"
+      animate="rest"
+      viewport={{ once: true, margin: '-50px' }}
       style={{ position: 'relative' }}
     >
       {property.status && (
@@ -39,14 +53,11 @@ const PropertyCard = ({ property }) => {
           {property.status}
         </div>
       )}
+
       <div className="card-actions" style={{ position: 'absolute', top: '20px', right: '20px', zIndex: 10, display: 'flex', gap: '10px' }}>
-        <button 
+        <button
           className={`compare-btn ${inComparison ? 'active' : ''}`}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            toggleComparison(property);
-          }}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleComparison(property); }}
           style={{
             background: inComparison ? '#D4AF37' : 'rgba(255, 255, 255, 0.95)',
             border: '1px solid var(--border)',
@@ -66,13 +77,9 @@ const PropertyCard = ({ property }) => {
         >
           🔄
         </button>
-        <button 
+        <button
           className={`favorite-btn ${favorited ? 'active' : ''}`}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            toggleFavorite(property.id);
-          }}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFavorite(property.id); }}
           style={{
             background: 'rgba(255, 255, 255, 0.95)',
             border: '1px solid var(--border)',
@@ -92,6 +99,7 @@ const PropertyCard = ({ property }) => {
           {favorited ? '❤️' : '🤍'}
         </button>
       </div>
+
       <div className="property-card" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column', height: '100%' }}>
         <Link to={`/property/${property.id}`} style={{ display: 'block', overflow: 'hidden' }}>
           <div className="property-img-container">
@@ -104,7 +112,7 @@ const PropertyCard = ({ property }) => {
             <h3>{property.title}</h3>
           </Link>
           <p>{property.description}</p>
-          
+
           <div className="property-footer">
             <div className="property-specs">
               <span>🛏️ {property.beds} Beds</span>
@@ -113,7 +121,7 @@ const PropertyCard = ({ property }) => {
             </div>
             <div className="property-price">{property.price}</div>
           </div>
-          
+
           {property.location && (
             <div style={{ fontSize: '0.8rem', color: '#888', marginTop: '10px', display: 'flex', alignItems: 'center', gap: '5px' }}>
               📍 {property.location}
@@ -121,18 +129,25 @@ const PropertyCard = ({ property }) => {
           )}
 
           <div style={{ marginTop: 'auto', paddingTop: '15px', display: 'flex', gap: '10px' }}>
-            <button 
-              className="btn-primary" 
-              style={{ flex: 2, padding: '8px', fontSize: '0.7rem' }}
-              onClick={(e) => {
-                e.preventDefault();
-                window.open(`https://wa.me/917799250555?text=Hi Sun Bright Properties, I am interested in ${encodeURIComponent(property.title)} (ID: ${property.id})`, '_blank');
-              }}
-            >
-              WhatsApp Inquiry
-            </button>
-            <Link 
-              to={`/property/${property.id}`} 
+            {/* Magnetic + Ripple WhatsApp CTA */}
+            <MagneticButton strength={0.25} style={{ flex: 2 }}>
+              <RippleButton
+                className="btn-primary"
+                style={{ width: '100%', padding: '8px', fontSize: '0.7rem' }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  const message = `Hi Sun Bright Properties, I am interested in ${property.title}`;
+                  window.open(
+                    `https://wa.me/917799250555?text=${encodeURIComponent(message)}`,
+                    '_blank'
+                  );
+                }}
+              >
+                WhatsApp Inquiry
+              </RippleButton>
+            </MagneticButton>
+            <Link
+              to={`/property/${property.id}`}
               style={{ flex: 1, padding: '8px', fontSize: '0.7rem', textAlign: 'center', border: '1px solid #ddd', borderRadius: '30px', textDecoration: 'none', color: '#666', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               Details

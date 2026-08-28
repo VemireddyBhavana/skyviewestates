@@ -9,6 +9,7 @@ import SplashCursor from './components/Common/SplashCursor'
 import Chatbot from './components/Common/Chatbot'
 import ComparisonBar from './components/Common/ComparisonBar'
 import './App.css'
+import './animations/animations.css'
 import Preloader from './components/Common/Preloader'
 
 import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion'
@@ -21,6 +22,11 @@ import { ComparisonProvider } from './context/ComparisonContext'
 
 import ScrollToTop from './components/Common/ScrollToTop'
 
+// ─── Animation infrastructure ────────────────────────────────────────────────
+import './animations/gsapConfig' // Registers GSAP plugins + sets defaults
+import { useLenis } from './animations/useLenis'
+import { useScrollTriggerRefresh } from './animations/useGSAP'
+
 function App() {
   const location = useLocation();
   const { scrollYProgress } = useScroll();
@@ -29,6 +35,12 @@ function App() {
     damping: 30,
     restDelta: 0.001
   });
+
+  // ─── Initialize Lenis smooth scroll + wire to GSAP ──────────────────────
+  useLenis();
+
+  // ─── Refresh ScrollTrigger on window resize (debounced 200ms) ───────────
+  useScrollTriggerRefresh();
 
   return (
     <FavoritesProvider>
@@ -58,6 +70,7 @@ function App() {
                 <Route path="/about" element={<About />} />
                 <Route path="/designs" element={<Properties />} />
                 <Route path="/designs/:category" element={<Properties />} />
+                <Route path="/designs/:category/:subCategory" element={<Properties />} />
                 <Route path="/designs/villa/:subCategory" element={<Properties />} />
                 <Route path="/favourites" element={<Properties />} />
                 <Route path="/properties/*" element={<Navigate to="/designs" replace />} />

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../components/Layout/Navbar';
 import PropertyCard from '../components/Common/PropertyCard';
-import ScrollReveal from '../components/Common/ScrollReveal';
+import AnimatedSection from '../components/Common/AnimatedSection';
 import { IMAGES, PROPERTIES } from '../constants/data';
 
 import { useFavorites } from '../context/FavoritesContext';
@@ -23,6 +23,9 @@ const Properties = () => {
   const filter = (() => {
     if (location.pathname === '/favourites') {
       return 'FAVORITES';
+    }
+    if (location.pathname.startsWith('/designs/villa')) {
+      return 'VILLA';
     }
     if (category) {
       const upperCat = category.toUpperCase();
@@ -102,11 +105,7 @@ const Properties = () => {
   };
 
   const handleSearch = (e) => {
-    const val = e.target.value;
-    setSearch(val);
-    if (val.trim() !== '' && filter !== 'ALL') {
-      navigate('/designs');
-    }
+    setSearch(e.target.value);
   };
 
   return (
@@ -182,9 +181,9 @@ const Properties = () => {
         <div className="properties-grid">
           {filteredProperties.length > 0 ? (
             filteredProperties.map(property => (
-              <ScrollReveal key={property.id}>
+              <AnimatedSection key={property.id}>
                 <PropertyCard property={property} />
-              </ScrollReveal>
+              </AnimatedSection>
             ))
           ) : (
             <div className="no-results">No properties found matching your criteria.</div>
