@@ -80,7 +80,7 @@ const Footer = () => {
           <h3>Contact Info</h3>
           <div className="contact-links">
             <a href="#" style={{ pointerEvents: 'none' }}>{CONTACT_INFO.address}</a>
-            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=sunbrightproperties99@gmail.com" target="_blank" rel="noopener noreferrer">{CONTACT_INFO.email}</a>
+            <a href="mailto:sunbrightproperties9@gmail.com" target="_blank" rel="noopener noreferrer">{CONTACT_INFO.email}</a>
             <a href={`tel:${CONTACT_INFO.phone.replace(/[\s-]/g, '')}`}>{CONTACT_INFO.phone}</a>
           </div>
         </div>
@@ -104,8 +104,8 @@ const Footer = () => {
         <div className="footer-bottom-right">
           <div className="footer-socials">
             <a href="#"><i className="fa-brands fa-x-twitter"></i></a>
-            <a href="#"><i className="fa-brands fa-instagram"></i></a>
-            <a href="#"><i className="fa-brands fa-youtube"></i></a>
+            <a href="https://www.instagram.com/sunbright_properties/" target="_blank" rel="noopener noreferrer"><i className="fa-brands fa-instagram"></i></a>
+            <a href="#"><i className="fa-brands fa-facebook"></i></a>
             <button 
               className="footer-camera-btn" 
               onClick={() => setShowLiveFeed(true)}

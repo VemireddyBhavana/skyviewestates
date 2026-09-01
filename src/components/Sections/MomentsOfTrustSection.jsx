@@ -4,23 +4,23 @@ const TRUST_MOMENTS = [
   {
     id: 1,
     title: "Client Handover Celebration",
-    description: "Celebrating successful property handovers and customer satisfaction.",
-    image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=800",
+    description: "Celebrating registered deed handover and milestone success with happy clients.",
+    image: "/assets/moments/journey-20.jpg",
     tag: "HANDOVER"
   },
   {
     id: 2,
     title: "Site Visit & Property Consultation",
-    description: "Guiding customers through premium investment opportunities and project locations.",
-    image: "/assets/moments/moment-1.jpg", // Using your actual uploaded photo!
-    tag: "SITE VISIT"
+    description: "Personalized on-site layout review and field consultation led by leadership.",
+    image: "/assets/moments/journey-21.jpg",
+    tag: "CEO IN ACTION"
   },
   {
     id: 3,
-    title: "Project Milestone & Customer Trust",
-    description: "Showcasing company achievements, customer interactions, and development milestones.",
-    image: "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&q=80&w=800",
-    tag: "MILESTONE"
+    title: "Plot Booking & Client Milestone",
+    description: "Official plot booking verification and documentation handover with client.",
+    image: "/assets/moments/journey-22.jpg",
+    tag: "CLIENT SUCCESS"
   }
 ];
 

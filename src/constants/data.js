@@ -53,7 +53,7 @@ export const PROPERTIES = [
 
 export const CONTACT_INFO = {
   address: "Hyderabad Road, near Passport Seva Kendra, Nizamabad, Telangana 503001",
-  email: "sunbrightproperities99@gmail.com",
+  email: "sunbrightproperties9@gmail.com",
   phone: "+91 77992 50555",
   hours: "Mon - Sat: 9:00 AM - 6:00 PM",
 };

@@ -148,7 +148,7 @@ ${formData.message}`;
                 <div className="detail-item">
                   <span className="detail-tag">EMAIL</span>
                   <p>
-                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=sunbrightproperties99@gmail.com" target="_blank" rel="noopener noreferrer" className="contact-detail-link anim-link">
+                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=sunbrightproperties9@gmail.com" target="_blank" rel="noopener noreferrer" className="contact-detail-link anim-link">
                       {CONTACT_INFO.email}
                     </a>
                   </p>
