@@ -22,6 +22,7 @@ import PassionSection from '../components/Sections/PassionSection';
 import AnimatedSection from '../components/Common/AnimatedSection';
 import { IMAGES } from '../constants/data';
 import AntiGravitySection from '../components/Sections/AntiGravitySection';
+import ExplodedJourney from '../components/Sections/ExplodedJourney';
 import DreamHomeQuiz from '../components/Common/DreamHomeQuiz';
 
 
@@ -57,7 +58,6 @@ const Home = () => {
   const heroTitleRef   = useRef(null);
   const heroButtonsRef = useRef(null);
   const hasAnimated    = useRef(false);
-  const parallaxRef    = useRef(null);
   const mouseRafRef    = useRef(null);
 
   // ─── Auto-advance slides ──────────────────────────────────────────────────
@@ -284,6 +284,9 @@ const Home = () => {
 
       {/* AntiGravity — already has its own entrance animation */}
       <AntiGravitySection />
+
+      {/* Construction journey */}
+      <ExplodedJourney />
 
       {/* Services / What We Do */}
       <AnimatedSection delay={0.05}>

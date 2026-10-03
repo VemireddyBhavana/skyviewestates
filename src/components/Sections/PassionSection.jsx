@@ -10,7 +10,6 @@
 
 import { useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { gsap } from 'gsap';
 import { IMAGES } from '../../constants/data';
 import { clipReveal, parallaxY, staggerChildren } from '../../animations/animUtils';
 

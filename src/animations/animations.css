@@ -246,3 +246,461 @@
   opacity: 0;
   transform: scale(0) rotate(-30deg);
 }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS — Mobile · Tablet · Laptop · Desktop
+   All sections covered: Navbar, Hero, AntiGravity, ExplodedJourney,
+   PinnedShowcase, Services, Testimonials, Passion, TrustGallery,
+   Properties, PropertyDetail, Footer, Chatbot, ComparisonBar, Finance, Contact
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Navbar — phone CTA ───────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .nav-phone-btn {
+    padding: 8px 16px !important;
+    font-size: 0.82rem !important;
+    gap: 5px !important;
+  }
+}
+@media (max-width: 480px) {
+  .nav-phone-btn {
+    font-size: 0.72rem !important;
+    padding: 7px 12px !important;
+  }
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: clamp(1.9rem, 7.5vw, 3rem) !important;
+    margin-bottom: 24px !important;
+    letter-spacing: -0.5px !important;
+  }
+  .hero-subtitle {
+    font-size: 0.93rem !important;
+  }
+  .slider-dots {
+    bottom: 28px;
+    gap: 10px;
+  }
+  .dot {
+    width: 9px;
+    height: 9px;
+  }
+}
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: clamp(1.65rem, 7vw, 2.2rem) !important;
+  }
+}
+
+/* ── Section container padding ────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .section-container {
+    padding: 50px 14px !important;
+  }
+}
+
+/* ── AntiGravity Section ─────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .antigravity-section {
+    height: auto !important;
+    min-height: 520px !important;
+    padding: 80px 20px !important;
+  }
+  /* Keep 3 floating houses on tablet, hide extras */
+  .floating-container .floating-house-card:nth-child(n+4) {
+    display: none !important;
+  }
+  .ag-content {
+    max-width: 100% !important;
+  }
+  .ag-content h2 {
+    font-size: clamp(2rem, 7.5vw, 3.2rem) !important;
+    margin: 20px 0 !important;
+  }
+  .ag-content p {
+    font-size: 0.92rem !important;
+  }
+}
+@media (max-width: 480px) {
+  .antigravity-section {
+    min-height: 440px !important;
+    padding: 60px 16px !important;
+  }
+  /* Only 2 floating houses on phones */
+  .floating-container .floating-house-card:nth-child(n+3) {
+    display: none !important;
+  }
+  /* Reduce orb blur radius so GPU doesn't choke */
+  .antigravity-section [style*="blur(60px)"] {
+    filter: blur(30px) !important;
+  }
+}
+
+/* ── ExplodedJourney ─────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .ej__card {
+    bottom: 20vh !important;
+    width: min(94vw, 360px) !important;
+    padding: 10px !important;
+    gap: 10px !important;
+  }
+  .ej__heading {
+    top: 8vh !important;
+    max-width: 70vw !important;
+  }
+  .ej__progress {
+    bottom: 9vh !important;
+  }
+}
+
+/* ── PinnedShowcase — Disable GSAP pin on mobile, show as vertical grid ──── */
+@media (max-width: 768px) {
+  .pinned-showcase-section {
+    height: auto !important;
+    overflow: visible !important;
+    padding: 60px 20px 80px !important;
+  }
+  .pinned-showcase-track {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+    height: auto !important;
+    padding: 0 !important;
+    gap: 24px !important;
+    will-change: unset !important;
+    /* Reset GSAP x transform that would be stuck from the effect guard */
+    transform: none !important;
+  }
+  .pinned-track-spacer {
+    display: none !important;
+  }
+  .showcase-panel {
+    width: 100% !important;
+    height: clamp(240px, 55vw, 420px) !important;
+    border-radius: 16px !important;
+  }
+  .pinned-showcase-header {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    margin-bottom: 32px !important;
+    pointer-events: auto !important;
+  }
+  .showcase-panel-overlay {
+    padding: 20px !important;
+  }
+  .showcase-details-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+  .showcase-desc {
+    max-width: 100% !important;
+    font-size: 0.82rem !important;
+  }
+}
+@media (max-width: 480px) {
+  .showcase-panel {
+    height: clamp(200px, 58vw, 280px) !important;
+  }
+  .showcase-title {
+    font-size: 1.2rem !important;
+    margin-bottom: 8px !important;
+  }
+}
+
+/* ── WhatWeDo / Services ─────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .services-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+    margin-top: 30px !important;
+  }
+  .service-img-container {
+    height: 160px !important;
+  }
+}
+@media (max-width: 480px) {
+  .service-card {
+    padding: 20px !important;
+    border-radius: 18px !important;
+  }
+  .service-card h3 {
+    font-size: 1.15rem !important;
+  }
+}
+
+/* ── Testimonials ────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .testimonials-left h2 {
+    font-size: 1.8rem !important;
+  }
+  .testimonials-left p {
+    font-size: 0.95rem !important;
+  }
+  .testimonial-card {
+    padding: 20px !important;
+  }
+}
+
+/* ── Passion Section ─────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .passion-content h2 {
+    font-size: 2.5rem !important;
+  }
+}
+@media (max-width: 768px) {
+  .passion-content h2 {
+    font-size: 2rem !important;
+  }
+  .passion-content p {
+    font-size: 1rem !important;
+  }
+  /* Cancel parallaxY on mobile — avoids GSAP transform fight */
+  .passion-img img {
+    transform: none !important;
+    will-change: unset !important;
+  }
+}
+@media (max-width: 480px) {
+  .passion-content h2 {
+    font-size: 1.7rem !important;
+  }
+}
+
+/* ── TrustGallery ────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .trust-gallery-section {
+    padding: 60px 0 80px !important;
+  }
+  .trust-gallery-header {
+    padding: 0 16px !important;
+    margin-bottom: 40px !important;
+  }
+  .tg-title {
+    font-size: clamp(1.5rem, 5vw, 2rem) !important;
+  }
+}
+@media (max-width: 600px) {
+  .tg-grid {
+    grid-template-columns: 1fr !important;
+    padding: 0 16px !important;
+  }
+  .tg-img-wrapper {
+    height: 220px !important;
+  }
+}
+/* Lightbox — bottom sheet on mobile */
+@media (max-width: 640px) {
+  .tg-lightbox {
+    padding: 0 !important;
+    align-items: flex-end !important;
+  }
+  .tg-lightbox-content {
+    border-radius: 20px 20px 0 0 !important;
+    max-height: 92vh !important;
+  }
+  .tg-lightbox-img-box {
+    height: 48vh !important;
+    min-height: 200px !important;
+  }
+  .tg-nav-prev { left: 8px !important; }
+  .tg-nav-next { right: 8px !important; }
+  .tg-lightbox-meta {
+    padding: 14px 16px 18px !important;
+  }
+  .tg-lightbox-title {
+    font-size: 1.05rem !important;
+  }
+  .tg-lightbox-desc {
+    font-size: 0.82rem !important;
+  }
+  .tg-lightbox-counter {
+    font-size: 0.72rem !important;
+    bottom: 18px !important;
+    right: 18px !important;
+  }
+}
+
+/* ── Properties listing page ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .properties-grid {
+    gap: 20px !important;
+  }
+  .property-img-container {
+    height: 220px !important;
+  }
+  .property-info h3 {
+    font-size: 1.15rem !important;
+  }
+}
+@media (max-width: 480px) {
+  .property-info {
+    padding: 18px !important;
+  }
+  .property-price {
+    font-size: 1.15rem !important;
+  }
+  .filter-group {
+    gap: 6px !important;
+  }
+  .filter-btn {
+    padding: 6px 12px !important;
+    font-size: 0.7rem !important;
+  }
+  .sub-filter-btn {
+    padding: 6px 12px !important;
+    font-size: 0.68rem !important;
+  }
+}
+
+/* ── PropertyDetail ──────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .detail-hero {
+    height: 60vh !important;
+  }
+  .detail-title {
+    font-size: clamp(1.7rem, 6vw, 2.8rem) !important;
+  }
+  .detail-price-tag {
+    font-size: 1.3rem !important;
+  }
+  .detail-specs-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    padding: 22px !important;
+    gap: 16px !important;
+  }
+  .spec-value {
+    font-size: 1.2rem !important;
+  }
+  .enquiry-card {
+    padding: 26px !important;
+    border-radius: 20px !important;
+  }
+}
+@media (max-width: 480px) {
+  .detail-hero {
+    height: 50vh !important;
+  }
+  .detail-specs-grid {
+    padding: 14px !important;
+    gap: 12px !important;
+  }
+  .spec-value {
+    font-size: 1rem !important;
+  }
+  .slots-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .booking-calendar {
+    padding: 14px !important;
+  }
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .footer-grid {
+    gap: 24px !important;
+  }
+  .footer-col h3 {
+    font-size: 1.1rem !important;
+    margin-bottom: 16px !important;
+  }
+  .footer-search input {
+    padding: 10px 14px !important;
+    font-size: 0.85rem !important;
+  }
+}
+
+/* ── Chatbot widget ──────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .chatbot-wrapper {
+    bottom: 16px !important;
+    right: 16px !important;
+  }
+  .chat-toggle {
+    width: 52px !important;
+    height: 52px !important;
+  }
+  .chat-hover-tooltip {
+    display: none !important;
+  }
+}
+
+/* ── ComparisonBar ───────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .comparison-bar-responsive {
+    flex-direction: column !important;
+    gap: 12px !important;
+    padding: 16px 20px !important;
+    border-radius: 20px !important;
+    bottom: 16px !important;
+    width: calc(100vw - 32px) !important;
+    left: 16px !important;
+    transform: none !important;
+  }
+}
+
+/* ── Finance / EMI Calculator ────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .calc-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+  .calculator-card {
+    padding: 24px !important;
+  }
+  .calc-header h2 {
+    font-size: 1.6rem !important;
+  }
+}
+
+/* ── Contact Page ────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .contact-welcome-container h2 {
+    font-size: 2rem !important;
+  }
+  .reach-out-card {
+    padding: 40px 24px !important;
+  }
+}
+@media (max-width: 480px) {
+  .reach-out-card {
+    padding: 28px 16px !important;
+  }
+  .reach-out-card h3 {
+    font-size: 1.6rem !important;
+  }
+}
+
+/* ── About Page ──────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .large-quote {
+    font-size: 1.35rem !important;
+    margin: 24px auto 0 !important;
+  }
+}
+
+/* ── Global: minimum touch targets ───────────────────────────────────────── */
+@media (max-width: 768px) {
+  button,
+  a[href],
+  [role="button"] {
+    min-height: 40px;
+  }
+}
+
+/* ── Reduced-motion: ensure CSS-animated elements also respect it ─────────── */
+@media (prefers-reduced-motion: reduce) {
+  .floating-house-card,
+  .shimmer-overlay,
+  .modern-typing-dot,
+  .online-indicator-dot,
+  .btn-primary-match::after,
+  .btn-hero::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

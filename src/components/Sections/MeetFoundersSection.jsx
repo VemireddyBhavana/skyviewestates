@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { FOUNDERS } from '../../constants/data';
-import { fadeUp, scaleReveal, staggerChildren } from '../../animations/animUtils';
+import { scaleReveal, staggerChildren } from '../../animations/animUtils';
 
 const MeetFoundersSection = () => {
   const sectionRef = useRef(null);

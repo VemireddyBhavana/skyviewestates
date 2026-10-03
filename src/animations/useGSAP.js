@@ -28,7 +28,6 @@ export function useGSAP(callback, ref, deps = []) {
     return () => {
       ctx.revert(); // Kills all animations + ScrollTriggers in this context
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 }
 

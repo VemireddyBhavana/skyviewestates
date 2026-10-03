@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { IMAGES } from '../../constants/data';
-import { fadeUp, clipReveal, lineReveal, staggerChildren } from '../../animations/animUtils';
+import { clipReveal, staggerChildren } from '../../animations/animUtils';
 
 const OurStorySection = () => {
   const sectionRef = useRef(null);

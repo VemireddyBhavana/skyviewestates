@@ -6,19 +6,18 @@
 
 import { useRef, useState, useEffect } from 'react';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const AnimatedCounter = ({ end = 0, suffix = '', prefix = '', label = '', className = '', style = {} }) => {
   const elRef = useRef(null);
-  const [displayed, setDisplayed] = useState(0);
+  const [displayed, setDisplayed] = useState(() => (
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? end : 0
+  ));
 
   useEffect(() => {
     const el = elRef.current;
     if (!el) return;
 
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) {
-      setDisplayed(end);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return;
     }
 

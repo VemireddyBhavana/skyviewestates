@@ -12,9 +12,8 @@
 import { useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TESTIMONIALS } from '../../constants/data';
-import { slideFromLeft, slideFromRight, fadeUp } from '../../animations/animUtils';
+import { slideFromLeft } from '../../animations/animUtils';
 
 const TestimonialsSection = () => {
   const sectionRef = useRef(null);

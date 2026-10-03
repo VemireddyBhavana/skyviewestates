@@ -21,7 +21,11 @@ const PinnedShowcaseSection = () => {
     const track = trackRef.current;
     if (!section || !track) return;
 
-    if (window.innerWidth < 768 || prefersReduced) return;
+    // On mobile — ensure no leftover GSAP x transform is applied
+    if (window.innerWidth < 768 || prefersReduced) {
+      track.style.transform = 'none';
+      return;
+    }
 
     const ctx = gsap.context(() => {
       const panels = track.querySelectorAll('.showcase-panel');
@@ -61,8 +65,20 @@ const PinnedShowcaseSection = () => {
       );
     }, section);
 
-    return () => ctx.revert();
+    // Reset transform on resize to mobile (e.g. orientation change)
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        track.style.transform = 'none';
+      }
+    };
+    window.addEventListener('resize', handleResize, { passive: true });
+
+    return () => {
+      ctx.revert();
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
+
 
   return (
     <section
