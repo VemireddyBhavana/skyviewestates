@@ -17,6 +17,8 @@
   inset: 0;
   width: 100%;
   height: 100%;
+  filter: contrast(1.08) brightness(1.06) saturate(1.08);
+  image-rendering: -webkit-optimize-contrast;
 }
 
 .ej__poster {
@@ -34,8 +36,8 @@
   z-index: 2;
   pointer-events: none;
   background:
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, transparent 34%),
-    linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 46%);
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, transparent 28%),
+    linear-gradient(to top, rgba(0, 0, 0, 0.55) 0%, transparent 36%);
 }
 
 .ej__heading {
@@ -99,8 +101,10 @@
   flex: 0 0 56px;
   width: 56px;
   height: 56px;
-  border-radius: 4px;
+  border-radius: 6px;
   object-fit: cover;
+  border: 1px solid rgba(224, 195, 168, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
 }
 
 .ej__card-copy {

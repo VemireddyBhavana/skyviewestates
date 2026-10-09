@@ -195,12 +195,11 @@ export default function ExplodedJourney() {
 
     const resizeCanvas = () => {
       const bounds = canvas.getBoundingClientRect();
-      const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
-      // Cap the canvas at 1920x1080 (x DPR): the frame source is 1920x1080,
-      // so anything larger would upscale the frame and stay soft.
-      const maxPx = Math.floor(1920 * pixelRatio);
-      canvas.width = Math.max(1, Math.min(Math.floor(bounds.width * pixelRatio), maxPx));
-      canvas.height = Math.max(1, Math.min(Math.floor(bounds.height * pixelRatio), maxPx * 9 / 16));
+      const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.max(1, Math.floor(bounds.width * pixelRatio));
+      canvas.height = Math.max(1, Math.floor(bounds.height * pixelRatio));
+      context.imageSmoothingEnabled = true;
+      context.imageSmoothingQuality = 'high';
       renderedFrameRef.current = -1;
       drawFrame(requestedFrameRef.current);
     };
