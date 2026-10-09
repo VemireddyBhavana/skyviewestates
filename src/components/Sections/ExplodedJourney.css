@@ -5,6 +5,7 @@
   height: 100vh;
   height: 100svh;
   overflow: hidden;
+  touch-action: pan-y;
   isolation: isolate;
   background: #111;
   color: #fff;
@@ -34,7 +35,7 @@
   pointer-events: none;
   background:
     linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, transparent 34%),
-    linear-gradient(to top, rgba(0, 0, 0, 0.72) 0%, transparent 40%);
+    linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 46%);
 }
 
 .ej__heading {
@@ -150,7 +151,7 @@
   right: 0;
   left: 0;
   height: 1px;
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.42);
 }
 
 .ej__fill {
@@ -178,8 +179,9 @@
   align-items: center;
   gap: 14px;
   transform: translate(-50%, -50%);
-  color: rgba(255, 255, 255, 0.42);
+  color: rgba(255, 255, 255, 0.65);
   font-size: 0.68rem;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   transition: color 0.3s;
@@ -195,12 +197,61 @@
   transform: translate(-100%, -50%);
 }
 
+.ej__step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  text-align: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Enlarged touch target without shifting the laid-out dots. */
+.ej__step::after {
+  content: '';
+  position: absolute;
+  inset: -14px -10px;
+}
+
+.ej__step:disabled {
+  cursor: default;
+}
+
+.ej__step:disabled::after {
+  content: none;
+}
+
+.ej__step:focus-visible {
+  outline: 2px solid var(--ej-accent);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.ej__progress li:first-child .ej__step {
+  align-items: flex-start;
+}
+
+.ej__progress li:last-child .ej__step {
+  align-items: flex-end;
+}
+
 .ej__progress li i {
   flex: 0 0 8px;
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
   transition: background 0.3s, transform 0.3s;
 }
 
