@@ -214,8 +214,8 @@ const AntiGravitySection = () => {
       </div>
 
       {/* Fog fades */}
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '150px', background: 'linear-gradient(to bottom, #050810 0%, transparent 100%)', zIndex: 5, pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '250px', background: 'linear-gradient(to top, #050810 20%, transparent 100%)', zIndex: 5, opacity: 0.8, pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '120px', background: 'linear-gradient(to bottom, #050810 0%, transparent 100%)', zIndex: 5, pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '80px', background: 'linear-gradient(to top, #050810 0%, transparent 100%)', zIndex: 5, opacity: 0.5, pointerEvents: 'none' }} />
 
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes agFloat {

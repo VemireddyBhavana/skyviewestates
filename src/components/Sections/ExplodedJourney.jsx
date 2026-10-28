@@ -11,7 +11,7 @@ const FRAME_DIRECTORY = '/journey/frames';
 // `progress` = scroll point where the stage becomes active.
 // `dot` = marker position on the track, spaced so labels never crowd each other.
 const STAGES = [
-  { label: 'Bare Land', text: 'Every home starts as raw, surveyed earth.', progress: 0, dot: 0, frame: 2 },
+  { label: 'Bare Land', text: 'Every home starts as raw, surveyed earth.', progress: 0, dot: 0, frame: 1 },
   { label: 'Foundation', text: 'Rebar and deep foundations, built to outlast decades.', progress: 0.23, dot: 0.23, frame: 20 },
   { label: 'Structure', text: 'The concrete skeleton rises into view.', progress: 0.42, dot: 0.42, frame: 42 },
   { label: 'Facade', text: 'Hand-carved stone facades take their final shape.', progress: 0.6, dot: 0.6, frame: 62 },
@@ -23,7 +23,7 @@ function getFramePath(frame) {
   return `${FRAME_DIRECTORY}/frame-${String(frame).padStart(3, '0')}.jpg`;
 }
 
-const POSTER = getFramePath(2);
+const POSTER = getFramePath(1);
 
 function loadFrame(frame) {
   return new Promise((resolve, reject) => {
@@ -190,12 +190,18 @@ export default function ExplodedJourney() {
       }
 
       context.clearRect(0, 0, canvas.width, canvas.height);
-      context.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
+      context.drawImage(
+        image,
+        Math.round(offsetX),
+        Math.round(offsetY),
+        Math.round(drawWidth),
+        Math.round(drawHeight)
+      );
     };
 
     const resizeCanvas = () => {
       const bounds = canvas.getBoundingClientRect();
-      const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      const pixelRatio = Math.max(window.devicePixelRatio || 1, 1.5);
       canvas.width = Math.max(1, Math.floor(bounds.width * pixelRatio));
       canvas.height = Math.max(1, Math.floor(bounds.height * pixelRatio));
       context.imageSmoothingEnabled = true;

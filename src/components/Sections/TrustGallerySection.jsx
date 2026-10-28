@@ -158,21 +158,7 @@ export default function TrustGallerySection() {
                 ✕
               </button>
 
-              {/* Prev / Next buttons */}
-              <button 
-                className="tg-lightbox-nav tg-nav-prev"
-                onClick={() => setActivePhotoIndex((prev) => (prev - 1 + JOURNEY_PHOTOS.length) % JOURNEY_PHOTOS.length)}
-                aria-label="Previous photo"
-              >
-                ❮
-              </button>
-              <button 
-                className="tg-lightbox-nav tg-nav-next"
-                onClick={() => setActivePhotoIndex((prev) => (prev + 1) % JOURNEY_PHOTOS.length)}
-                aria-label="Next photo"
-              >
-                ❯
-              </button>
+
 
               {/* Lightbox Image */}
               <div className="tg-lightbox-img-box">
@@ -187,9 +173,7 @@ export default function TrustGallerySection() {
               <div className="tg-lightbox-meta">
                 <h3 className="tg-lightbox-title">{activePhoto.title}</h3>
                 <p className="tg-lightbox-desc">{activePhoto.description}</p>
-                <span className="tg-lightbox-counter">
-                  {activePhotoIndex + 1} / {JOURNEY_PHOTOS.length}
-                </span>
+
               </div>
             </motion.div>
           </motion.div>
