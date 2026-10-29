@@ -45,34 +45,34 @@ export default function ExplodedJourney() {
   const requestedFrameRef = useRef(initialFrameIndex);
   const renderedFrameRef = useRef(-1);
   const drawFrameRef = useRef(null);
+  const triggerRef = useRef(null);
   const [prefersReducedMotion] = useState(() => (
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
   ));
-  // Stage index driven by ScrollTrigger on wide screens, by the tap/swipe stepper on small ones.
+
   const [scrollStage, setScrollStage] = useState(0);
   const activeRef = useRef(0);
-  const goToStageRef = useRef(null);
-  const touchXRef = useRef(null);
-  const touchYRef = useRef(null);
-  const [isWide, setIsWide] = useState(() => window.matchMedia('(min-width: 768px)').matches);
   const [imagesReady, setImagesReady] = useState(false);
   const [assetMessage, setAssetMessage] = useState('');
   const lastStage = STAGES.length - 1;
-  // Reduced-motion users always see the final stage; everyone else follows scrollStage,
-  // which ScrollTrigger drives on wide screens and the tap/swipe stepper on small ones.
-  const active = prefersReducedMotion ? lastStage : scrollStage;
-  const stepperActive = !isWide && !prefersReducedMotion;
-  const handleStep = (index) => {
-    if (!stepperActive) return;
-    goToStageRef.current?.(index);
-  };
 
-  useEffect(() => {
-    const query = window.matchMedia('(min-width: 768px)');
-    const handleChange = (event) => setIsWide(event.matches);
-    query.addEventListener('change', handleChange);
-    return () => query.removeEventListener('change', handleChange);
-  }, []);
+  const active = prefersReducedMotion ? lastStage : scrollStage;
+
+  const handleStep = (index) => {
+    const target = STAGES[index];
+    if (!target) return;
+    if (triggerRef.current) {
+      const start = triggerRef.current.start;
+      const end = triggerRef.current.end;
+      const scrollPos = start + target.progress * (end - start);
+      window.scrollTo({ top: scrollPos, behavior: 'smooth' });
+    } else {
+      activeRef.current = index;
+      setScrollStage(index);
+      drawFrameRef.current?.(target.frame - 1);
+      if (fillRef.current) fillRef.current.style.transform = `scaleX(${target.progress})`;
+    }
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -235,27 +235,6 @@ export default function ExplodedJourney() {
       };
     }
 
-    // Small screens skip the 400vh pin: a tap/swipe stepper drives the frames instead.
-    if (!isWide) {
-      const showStage = (index) => {
-        const next = Math.max(0, Math.min(lastStage, index));
-        const target = STAGES[next];
-        activeRef.current = next;
-        setScrollStage(next);
-        progressRef.current = target.progress;
-        drawFrame(target.frame - 1);
-        if (fillRef.current) fillRef.current.style.transform = `scaleX(${target.progress})`;
-      };
-
-      showStage(activeRef.current);
-      goToStageRef.current = showStage;
-      return () => {
-        window.removeEventListener('resize', resizeCanvas);
-        goToStageRef.current = null;
-        drawFrameRef.current = null;
-      };
-    }
-
     const applyProgress = (progress) => {
       progressRef.current = progress;
       drawFrame(Math.min(FRAME_COUNT - 1, Math.floor(progress * FRAME_COUNT)));
@@ -275,18 +254,19 @@ export default function ExplodedJourney() {
       }
     };
 
+    // Pinned scroll animation on ALL devices (mobile, tablet, and laptop)
     const contextScope = gsap.context(() => {
       const trigger = ScrollTrigger.create({
         trigger: sectionRef.current,
         start: 'top top',
-        end: '+=400%',
+        end: () => (window.innerWidth < 768 ? '+=280%' : '+=380%'),
         pin: true,
-        scrub: 0.5,
+        scrub: 0.4,
         anticipatePin: 1,
+        invalidateOnRefresh: true,
         onUpdate: (instance) => applyProgress(instance.progress),
       });
-      // Sync card, fill and dots when the trigger is (re)created mid-scroll,
-      // e.g. right after the viewport crosses the 768px breakpoint.
+      triggerRef.current = trigger;
       if (typeof trigger.progress === 'number') applyProgress(trigger.progress);
     }, sectionRef);
 
@@ -295,11 +275,11 @@ export default function ExplodedJourney() {
     return () => {
       cancelAnimationFrame(refreshId);
       window.removeEventListener('resize', resizeCanvas);
-      goToStageRef.current = null;
+      triggerRef.current = null;
       drawFrameRef.current = null;
       contextScope.revert();
     };
-  }, [imagesReady, lastStage, isWide]);
+  }, [imagesReady, lastStage]);
 
   const stage = STAGES[active];
 
@@ -309,22 +289,6 @@ export default function ExplodedJourney() {
       className="ej"
       id="journey"
       aria-label="The construction journey"
-      onTouchStart={(event) => {
-        if (stepperActive) {
-          touchXRef.current = event.touches[0].clientX;
-          touchYRef.current = event.touches[0].clientY;
-        }
-      }}
-      onTouchEnd={(event) => {
-        if (!stepperActive || touchXRef.current === null || touchYRef.current === null) return;
-        const deltaX = event.changedTouches[0].clientX - touchXRef.current;
-        const deltaY = event.changedTouches[0].clientY - touchYRef.current;
-        touchXRef.current = null;
-        touchYRef.current = null;
-        if (Math.abs(deltaY) > Math.abs(deltaX)) return;
-        if (Math.abs(deltaX) < 40) return;
-        handleStep(active + (deltaX < 0 ? 1 : -1));
-      }}
     >
       <img className="ej__poster" src={POSTER} alt="" aria-hidden="true" />
       <canvas ref={canvasRef} className="ej__canvas" aria-hidden="true" />
@@ -339,36 +303,11 @@ export default function ExplodedJourney() {
         <p className="ej__asset-message" role="status">{assetMessage}</p>
       )}
 
-      {stepperActive && (
-        <div className="ej__mobile-nav" aria-label="Journey navigation">
-          <button
-            type="button"
-            className="ej__nav-btn ej__nav-prev"
-            onClick={() => handleStep(active - 1)}
-            disabled={active === 0}
-            aria-label="Previous construction stage"
-          >
-            ‹
-          </button>
-          <button
-            type="button"
-            className="ej__nav-btn ej__nav-next"
-            onClick={() => handleStep(active + 1)}
-            disabled={active === lastStage}
-            aria-label="Next construction stage"
-          >
-            ›
-          </button>
-        </div>
-      )}
-
       <div
         key={active}
         className="ej__card"
         aria-live="polite"
-        onClick={() => {
-          if (stepperActive) handleStep((active + 1) % STAGES.length);
-        }}
+        onClick={() => handleStep((active + 1) % STAGES.length)}
       >
         <img
           src={getFramePath(stage.frame)}
@@ -400,7 +339,6 @@ export default function ExplodedJourney() {
                 type="button"
                 className="ej__step"
                 onClick={() => handleStep(index)}
-                disabled={!stepperActive}
                 aria-label={`Stage ${index + 1}: ${item.label}`}
               >
                 <i aria-hidden="true" />
