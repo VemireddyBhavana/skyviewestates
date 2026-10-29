@@ -53,6 +53,7 @@ export default function ExplodedJourney() {
   const activeRef = useRef(0);
   const goToStageRef = useRef(null);
   const touchXRef = useRef(null);
+  const touchYRef = useRef(null);
   const [isWide, setIsWide] = useState(() => window.matchMedia('(min-width: 768px)').matches);
   const [imagesReady, setImagesReady] = useState(false);
   const [assetMessage, setAssetMessage] = useState('');
@@ -148,6 +149,7 @@ export default function ExplodedJourney() {
 
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d', { alpha: false });
+
     if (!context) {
       setAssetMessage('The journey animation could not start because this browser does not support canvas.');
       return undefined;
@@ -189,6 +191,8 @@ export default function ExplodedJourney() {
         offsetY = 0;
       }
 
+      context.imageSmoothingEnabled = true;
+      context.imageSmoothingQuality = 'high';
       context.clearRect(0, 0, canvas.width, canvas.height);
       context.drawImage(
         image,
@@ -201,7 +205,7 @@ export default function ExplodedJourney() {
 
     const resizeCanvas = () => {
       const bounds = canvas.getBoundingClientRect();
-      const pixelRatio = Math.max(window.devicePixelRatio || 1, 1.5);
+      const pixelRatio = Math.min(Math.max(window.devicePixelRatio || 1, 1), 2);
       canvas.width = Math.max(1, Math.floor(bounds.width * pixelRatio));
       canvas.height = Math.max(1, Math.floor(bounds.height * pixelRatio));
       context.imageSmoothingEnabled = true;
@@ -297,7 +301,6 @@ export default function ExplodedJourney() {
     };
   }, [imagesReady, lastStage, isWide]);
 
-
   const stage = STAGES[active];
 
   return (
@@ -307,13 +310,19 @@ export default function ExplodedJourney() {
       id="journey"
       aria-label="The construction journey"
       onTouchStart={(event) => {
-        if (stepperActive) touchXRef.current = event.touches[0].clientX;
+        if (stepperActive) {
+          touchXRef.current = event.touches[0].clientX;
+          touchYRef.current = event.touches[0].clientY;
+        }
       }}
       onTouchEnd={(event) => {
-        if (!stepperActive || touchXRef.current === null) return;
+        if (!stepperActive || touchXRef.current === null || touchYRef.current === null) return;
         const deltaX = event.changedTouches[0].clientX - touchXRef.current;
+        const deltaY = event.changedTouches[0].clientY - touchYRef.current;
         touchXRef.current = null;
-        if (Math.abs(deltaX) < 50) return;
+        touchYRef.current = null;
+        if (Math.abs(deltaY) > Math.abs(deltaX)) return;
+        if (Math.abs(deltaX) < 40) return;
         handleStep(active + (deltaX < 0 ? 1 : -1));
       }}
     >
@@ -330,7 +339,37 @@ export default function ExplodedJourney() {
         <p className="ej__asset-message" role="status">{assetMessage}</p>
       )}
 
-      <div key={active} className="ej__card" aria-live="polite">
+      {stepperActive && (
+        <div className="ej__mobile-nav" aria-label="Journey navigation">
+          <button
+            type="button"
+            className="ej__nav-btn ej__nav-prev"
+            onClick={() => handleStep(active - 1)}
+            disabled={active === 0}
+            aria-label="Previous construction stage"
+          >
+            ‹
+          </button>
+          <button
+            type="button"
+            className="ej__nav-btn ej__nav-next"
+            onClick={() => handleStep(active + 1)}
+            disabled={active === lastStage}
+            aria-label="Next construction stage"
+          >
+            ›
+          </button>
+        </div>
+      )}
+
+      <div
+        key={active}
+        className="ej__card"
+        aria-live="polite"
+        onClick={() => {
+          if (stepperActive) handleStep((active + 1) % STAGES.length);
+        }}
+      >
         <img
           src={getFramePath(stage.frame)}
           alt=""
@@ -339,7 +378,7 @@ export default function ExplodedJourney() {
         />
         <div className="ej__card-copy">
           <span className="ej__kicker">
-            Stage {active + 1} / {STAGES.length} - {stage.label}
+            Stage {active + 1} / {STAGES.length} — {stage.label}
           </span>
           <p>{stage.text}</p>
         </div>

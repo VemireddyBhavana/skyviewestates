@@ -297,7 +297,7 @@ const Home = () => {
       <AnimatedSection delay={0.05}>
         <div className="ai-cta-section" style={{
           padding: '140px 20px',
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('/assets/ai-bg-v2.png')`,
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.55)), url('/assets/ai-bg-v2.png')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed',
@@ -353,6 +353,7 @@ const Home = () => {
             @media (max-width: 768px) {
               .ai-cta-section {
                 padding: 80px 20px !important;
+                background-attachment: scroll !important;
               }
               .ai-cta-title {
                 font-size: 2.2rem !important;

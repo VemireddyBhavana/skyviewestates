@@ -116,15 +116,16 @@ const AntiGravitySection = () => {
       onMouseLeave={handleMouseLeave}
       style={{
         position: 'relative',
-        height: '800px',
-        backgroundImage: `linear-gradient(rgba(5, 8, 16, 0.8), rgba(5, 8, 16, 0.8)), url('/assets/ag-bg.png')`,
+        minHeight: '750px',
+        height: 'auto',
+        backgroundImage: `linear-gradient(rgba(5, 8, 16, 0.55), rgba(5, 8, 16, 0.65)), url('/assets/ag-bg.png')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         overflow: 'hidden',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '100px 20px',
+        padding: '120px 20px',
       }}
     >
       {/* Floating ambient particles */}
@@ -150,13 +151,13 @@ const AntiGravitySection = () => {
       <div ref={orb1Ref} style={{
         position: 'absolute', top: '10%', left: '5%',
         width: '500px', height: '500px', borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(77,159,232,0.15) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(77,159,232,0.18) 0%, transparent 70%)',
         filter: 'blur(60px)', zIndex: 1, pointerEvents: 'none',
       }} />
       <div ref={orb2Ref} style={{
         position: 'absolute', bottom: '10%', right: '5%',
         width: '600px', height: '600px', borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(200,169,110,0.12) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(200,169,110,0.16) 0%, transparent 70%)',
         filter: 'blur(60px)', zIndex: 1, pointerEvents: 'none',
       }} />
 
@@ -187,15 +188,15 @@ const AntiGravitySection = () => {
           ARCHITECTURAL MARVELS
         </span>
         <h2 style={{
-          fontSize: 'clamp(3rem, 8vw, 5.5rem)',
+          fontSize: 'clamp(2.4rem, 6vw, 5rem)',
           fontFamily: "'Playfair Display', serif",
-          fontWeight: '300', color: '#fff', margin: '30px 0', lineHeight: '1.1',
+          fontWeight: '300', color: '#fff', margin: '24px 0', lineHeight: '1.1',
         }}>
           Homes That <br />
           <i style={{ color: '#C8A96E' }}>Defy Limits</i> <br />
           and Logic
         </h2>
-        <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto 40px', lineHeight: '1.8' }}>
+        <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '1.05rem', maxWidth: '600px', margin: '0 auto 36px', lineHeight: '1.8' }}>
           Our Signature Series represents the pinnacle of human ingenuity—homes that aren't just built, but envisioned beyond the ordinary.
         </p>
         <Link to="/designs">
@@ -242,7 +243,11 @@ const AntiGravitySection = () => {
         }
         @media (max-width: 768px) {
           .house-1, .house-6 { display: none !important; }
-          .ag-content h2 { font-size: 3rem !important; }
+          .ag-content h2 { font-size: 2.5rem !important; }
+          .ag-content p { font-size: 0.95rem !important; }
+        }
+        @media (min-width: 769px) and (max-width: 1024px) {
+          .ag-content h2 { font-size: 3.8rem !important; }
         }
       `}} />
     </section>
