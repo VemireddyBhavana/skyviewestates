@@ -25,10 +25,13 @@ const Navbar = () => {
     setIsMenuOpen(false);
   }, [location.pathname]);
 
-  // Lock body scroll when mobile menu is open
+  // Lock body scroll and ensure navbar is visible when mobile menu is open
   useEffect(() => {
     if (isMenuOpen) {
       document.body.style.overflow = 'hidden';
+      if (navRef.current) {
+        navRef.current.classList.remove('hidden-up');
+      }
     } else {
       document.body.style.overflow = '';
     }
@@ -44,12 +47,15 @@ const Navbar = () => {
     const isMobile = window.innerWidth <= 1024;
 
     if (isMobile) {
-      // On mobile: ensure nav and logo are always visible; skip staggered li animation
-      // so drawer links are never left at opacity:0 by GSAP
-      if (nav)  nav.style.opacity  = '1';
-      if (nav)  nav.style.transform = 'translateY(0)';
-      if (logo) logo.style.opacity = '1';
-      if (logo) logo.style.transform = 'translateX(0)';
+      // On mobile: ensure nav and logo are visible without inline transforms that break fixed drawer positioning
+      if (nav) {
+        nav.style.opacity = '1';
+        nav.style.transform = 'none';
+      }
+      if (logo) {
+        logo.style.opacity = '1';
+        logo.style.transform = 'none';
+      }
       return;
     }
 
