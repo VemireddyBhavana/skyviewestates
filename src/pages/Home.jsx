@@ -289,9 +289,7 @@ const Home = () => {
       <ExplodedJourney />
 
       {/* Services / What We Do */}
-      <AnimatedSection delay={0.05}>
-        <WhatWeDoSection />
-      </AnimatedSection>
+      <WhatWeDoSection />
 
       {/* AI CTA Section */}
       <AnimatedSection delay={0.05}>
@@ -450,14 +448,10 @@ const Home = () => {
 
 
       {/* Testimonials */}
-      <AnimatedSection delay={0.05}>
-        <TestimonialsSection />
-      </AnimatedSection>
+      <TestimonialsSection />
 
       {/* Passion */}
-      <AnimatedSection delay={0.05}>
-        <PassionSection />
-      </AnimatedSection>
+      <PassionSection />
     </>
   );
 };

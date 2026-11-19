@@ -23,6 +23,11 @@ function SplashCursor({
   const animationFrameId = useRef(null);
 
   useEffect(() => {
+    // Disable expensive cursor simulation on touch-only mobile devices to maximize scrolling performance
+    if (window.matchMedia('(pointer: coarse)').matches && !window.matchMedia('(pointer: fine)').matches) {
+      return;
+    }
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -1125,8 +1130,8 @@ function SplashCursor({
         ref={canvasRef}
         id="fluid"
         style={{
-          width: '100vw',
-          height: '100vh',
+          width: '100%',
+          height: '100%',
           display: 'block'
         }}
       />

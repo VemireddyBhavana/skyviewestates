@@ -3,6 +3,8 @@
 html {
   /* scroll-behavior: smooth; — Disabled: Lenis handles smooth scrolling */
   scroll-behavior: auto;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 /* Reduced-motion: disable CSS transitions + animations */
@@ -40,12 +42,21 @@ html {
 
 body {
   margin: 0;
+  overflow-x: hidden;
+  max-width: 100%;
   background-color: var(--bg-dark);
   background-image: 
     radial-gradient(circle at 100% 0%, rgba(212, 175, 55, 0.05) 0%, transparent 40%);
   color: var(--text-main);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+}
+
+.app-wrapper {
+  overflow-x: hidden;
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
 }
 
 #root {

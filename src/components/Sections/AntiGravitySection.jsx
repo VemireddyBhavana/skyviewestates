@@ -242,12 +242,15 @@ const AntiGravitySection = () => {
           100% { background-position: 100% 100%; }
         }
         @media (max-width: 768px) {
-          .house-1, .house-6 { display: none !important; }
-          .ag-content h2 { font-size: 2.5rem !important; }
-          .ag-content p { font-size: 0.95rem !important; }
+          .house-1, .house-3, .house-4, .house-6 { display: none !important; }
+          .house-2 { left: 4% !important; width: 68px !important; opacity: 0.75 !important; }
+          .house-5 { left: 78% !important; width: 72px !important; opacity: 0.75 !important; }
+          .ag-content h2 { font-size: clamp(2rem, 7vw, 2.7rem) !important; margin: 18px 0 !important; }
+          .ag-content p { font-size: 0.92rem !important; padding: 0 10px; margin-bottom: 28px !important; }
+          .antigravity-section { padding: 90px 16px !important; min-height: 600px !important; }
         }
         @media (min-width: 769px) and (max-width: 1024px) {
-          .ag-content h2 { font-size: 3.8rem !important; }
+          .ag-content h2 { font-size: 3.5rem !important; }
         }
       `}} />
     </section>

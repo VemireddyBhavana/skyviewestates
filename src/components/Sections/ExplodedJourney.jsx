@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { scrollTo as lenisScrollTo } from '../../animations/useLenis';
 import './ExplodedJourney.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -46,6 +47,8 @@ export default function ExplodedJourney() {
   const renderedFrameRef = useRef(-1);
   const drawFrameRef = useRef(null);
   const triggerRef = useRef(null);
+  const touchXRef = useRef(null);
+  const touchYRef = useRef(null);
   const [prefersReducedMotion] = useState(() => (
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
   ));
@@ -59,16 +62,18 @@ export default function ExplodedJourney() {
   const active = prefersReducedMotion ? lastStage : scrollStage;
 
   const handleStep = (index) => {
-    const target = STAGES[index];
+    const clampedIndex = Math.max(0, Math.min(lastStage, index));
+    const target = STAGES[clampedIndex];
     if (!target) return;
+
     if (triggerRef.current) {
       const start = triggerRef.current.start;
       const end = triggerRef.current.end;
       const scrollPos = start + target.progress * (end - start);
-      window.scrollTo({ top: scrollPos, behavior: 'smooth' });
+      lenisScrollTo(scrollPos);
     } else {
-      activeRef.current = index;
-      setScrollStage(index);
+      activeRef.current = clampedIndex;
+      setScrollStage(clampedIndex);
       drawFrameRef.current?.(target.frame - 1);
       if (fillRef.current) fillRef.current.style.transform = `scaleX(${target.progress})`;
     }
@@ -100,7 +105,7 @@ export default function ExplodedJourney() {
         ? FRAME_COUNT - 1
         : initialFrameIndex;
 
-      // Start the pinned animation as soon as its first meaningful frame is ready.
+      // Start the animation as soon as the initial frame is loaded
       setImagesReady(true);
 
       if (prefersReducedMotion) return;
@@ -179,7 +184,15 @@ export default function ExplodedJourney() {
       let offsetX;
       let offsetY;
 
-      if (canvasRatio > imageRatio) {
+      // On mobile portrait displays (canvasRatio < 1):
+      // Fit 100% width so the entire estate (villa, pool, palm trees, landscape) is completely visible without cropping!
+      if (canvasRatio < 1.0) {
+        drawWidth = canvas.width;
+        drawHeight = canvas.width / imageRatio;
+        offsetX = 0;
+        // Positioned slightly above vertical center so heading is above and info card sits cleanly below
+        offsetY = Math.round((canvas.height - drawHeight) * 0.38);
+      } else if (canvasRatio > imageRatio) {
         drawWidth = canvas.width;
         drawHeight = canvas.width / imageRatio;
         offsetX = 0;
@@ -256,12 +269,14 @@ export default function ExplodedJourney() {
 
     // Pinned scroll animation on ALL devices (mobile, tablet, and laptop)
     const contextScope = gsap.context(() => {
+      const isMobile = window.innerWidth < 768;
       const trigger = ScrollTrigger.create({
         trigger: sectionRef.current,
         start: 'top top',
-        end: () => (window.innerWidth < 768 ? '+=280%' : '+=380%'),
+        end: () => (window.innerWidth < 768 ? '+=220%' : '+=380%'),
         pin: true,
-        scrub: 0.4,
+        // Responsive scrub: instantaneous response on mobile touch, silky inertia on desktop wheel
+        scrub: isMobile ? 0.08 : 0.35,
         anticipatePin: 1,
         invalidateOnRefresh: true,
         onUpdate: (instance) => applyProgress(instance.progress),
@@ -289,6 +304,21 @@ export default function ExplodedJourney() {
       className="ej"
       id="journey"
       aria-label="The construction journey"
+      onTouchStart={(e) => {
+        touchXRef.current = e.touches[0].clientX;
+        touchYRef.current = e.touches[0].clientY;
+      }}
+      onTouchEnd={(e) => {
+        if (touchXRef.current === null || touchYRef.current === null) return;
+        const deltaX = e.changedTouches[0].clientX - touchXRef.current;
+        const deltaY = e.changedTouches[0].clientY - touchYRef.current;
+        touchXRef.current = null;
+        touchYRef.current = null;
+        // If primarily horizontal swipe
+        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 45) {
+          handleStep(active + (deltaX < 0 ? 1 : -1));
+        }
+      }}
     >
       <img className="ej__poster" src={POSTER} alt="" aria-hidden="true" />
       <canvas ref={canvasRef} className="ej__canvas" aria-hidden="true" />

@@ -46,8 +46,10 @@ export function useScrollTriggerRefresh() {
     };
 
     window.addEventListener('resize', handleResize, { passive: true });
+    window.addEventListener('orientationchange', handleResize, { passive: true });
     return () => {
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
       clearTimeout(timeout);
     };
   }, []);
