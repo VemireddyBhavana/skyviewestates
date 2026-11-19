@@ -37,12 +37,24 @@ const Navbar = () => {
     };
   }, [isMenuOpen]);
 
-  // Page-load entrance animation
+  // Page-load entrance animation — desktop only
   useEffect(() => {
     const nav   = navRef.current;
     const logo  = logoRef.current;
-    const links = linksRef.current?.querySelectorAll('li') || [];
+    const isMobile = window.innerWidth <= 1024;
 
+    if (isMobile) {
+      // On mobile: ensure nav and logo are always visible; skip staggered li animation
+      // so drawer links are never left at opacity:0 by GSAP
+      if (nav)  nav.style.opacity  = '1';
+      if (nav)  nav.style.transform = 'translateY(0)';
+      if (logo) logo.style.opacity = '1';
+      if (logo) logo.style.transform = 'translateX(0)';
+      return;
+    }
+
+    // Desktop: run full entrance animation (excludes mobile-nav-header li)
+    const links = linksRef.current?.querySelectorAll('li:not(.mobile-nav-header)') || [];
     if (nav && logo && links.length) {
       navbarEntrance(nav, logo, Array.from(links));
     }
